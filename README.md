@@ -89,3 +89,34 @@ word == word[::-1] # 단어와 거꾸로 읽은 것이 같은지 확인
     + `set`을 사용하는 방법
     + `list`와 `.count()`를 사용하는 방법
     + `list`에 미리 전체 요소를 넣어놓고 해당 요소가 나올 때 마다 `.remove()`를 해서 빈 리스트가 될 때까지 하는 방법
+
+
+
+## 2021-02-09
+
++ Difficulty 2의 정답율 순 7번 ~ 10번 문제를 풀었다. **(10번은 못풀었다.) SWEA1979 꼭 다시** => **풀었다!**
++ 전체적으로 매우 어려웠다.
++ min과 max를 구하는 문제에서는 `float('inf')`를 활용해도 좋다.
+
+```python
+# 초기값 설정
+max_num = float('-inf')
+min_num = float('inf')
+```
+
++ 구간을 나눠 비교해야 하는 문제는 마냥 index 접근보다는 **slicing**접근도 좋다!
++ 이중배열을 만들 때는 리스트 내포 기능을 사용해도 수월하다.
+
+```python
+alist = [list(map(int, input().split())) for i in range(n)]
+```
+
++ 이중배열에서 행과 열의 스위칭에 주의하자(헷갈리지 말자)
+
+```python
+for i in range(n):
+    for j in range(n):
+        alist[i][j] # => 행 접근
+        alist[j][i] # => 열 접근
+```
+
