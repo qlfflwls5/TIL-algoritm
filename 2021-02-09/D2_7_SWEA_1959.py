@@ -51,7 +51,7 @@ for t in range(1, T+1):
             max_sum = temp_sum
         if temp_sum > max_sum:
             max_sum =temp_sum
-    
+
     print('#%d %d' %(t, max_sum))
 
 # float('inf')

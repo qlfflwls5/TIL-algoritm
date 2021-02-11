@@ -104,6 +104,17 @@ max_num = float('-inf')
 min_num = float('inf')
 ```
 
++ **그래도 min, max 초기값 설정은 내 SWEA D2_7_1959를 따르자! 이게 제일 좋은 것 같다.**
+
+```python
+for문 ~ :
+    작업~
+    if i == 0:
+        max_num = temp_num
+    if temp_num > max_num:
+        max_num = temp_num
+```
+
 + 구간을 나눠 비교해야 하는 문제는 마냥 index 접근보다는 **slicing**접근도 좋다!
 + 이중배열을 만들 때는 리스트 내포 기능을 사용해도 수월하다.
 
@@ -119,4 +130,8 @@ for i in range(n):
         alist[i][j] # => 행 접근
         alist[j][i] # => 열 접근
 ```
+
+
+
+## 2021.02.11
 
