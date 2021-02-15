@@ -230,3 +230,57 @@ else:
 
 + **삼항연산자**를 사용하면 매우 간단하게 나타낼 수 있다.
 + 전자의 경우는 조건 자체가 길기 때문에 삼항연산자를 사용하더라도 코드가 지저분해진다.
+
+
+
+## 2021-02-14
+
++ 싸피 Day01의 알고리즘 문제들을 복습하였다.
++ Bubble Sort, Counting Sort, 완전 탐색, 탐욕 알고리즘을 배웠다.
++ 버블 정렬
+
+```python
+def BubbleSort(arr):
+    for i in range(len(arr)-1, 0, -1):
+        for j in range(0, i):
+            if a[j] > a[j+1]:
+                a[j], a[j+1] = a[j+1], a[j]
+```
+
++ 카운팅 정렬
+
+```python
+def CountingSort(arr, temp, k):
+	# arr은 정렬할 리스트
+    # temp는 정렬할 리스트의 길이를 갖는 빈 리스트/arr의 복사본
+    # k는 arr에서의 최대값
+    # C는 카운트 리스트
+    C = [0] * (k+1)
+    for i in range(len(arr)):
+        C[arr[i]] += 1
+    
+    for i in range(1, len(C)):
+        C[i] += C[i-1]
+    
+    for i in range(len(temp), -1, -1):
+        temp[C[arr[i]]-1] = arr[i]
+        C[arr[i]] -= 1
+```
+
++ 완전 탐색
+
+```python
+# 예) {1, 2, 3}을 포함하는 모든 순열을 생성하는 코드(중복 없이)
+for i1 in range(1, 4):
+    for i2 in range(1, 4):
+        if i2 != i1:
+            for i3 in range(1, 4):
+                if i3 != i2 and i3 != i1:
+                    print(i1, i2, i3)
+```
+
++ 탐욕 알고리즘
+  + 여러 경우 중 하나를 결정해야 할 때마다 그 순간에 최적이라고 생각되는 것을 선택해 나가는 방식으로 진행해 최종적인 해답에 도달
++ 느낀점 및 배운 것들
+  + **정렬 알고리즘**은 하나만 알아서는 안되고 상황에 따라 알맞는 것을 사용해야 한다. 다 익숙해지자
+  + 아직까지 탐욕 알고리즘은 무엇을 의미하는 것인지 잘 와닿지 않는다.
