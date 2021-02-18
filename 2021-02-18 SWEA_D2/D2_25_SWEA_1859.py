@@ -34,21 +34,22 @@ T = int(input())
 for t in range(1, T+1):
     N = int(input())
     price_list = list(map(int, input().split()))
-    print(price_list)
     i = 0
     profit = 0
     # 마지막 요소에 도착하면 그대로 끝나므로 i가 N보다 작을 때까지 진행한다.
     while i < N:
+        # i부터 시작하여 최대값이 있는 인덱스를 찾는다.
         max_i = i
-        for j in range(i, N):
+        for j in range(i+1, N):
             if price_list[max_i] < price_list[j]:
                 max_i = j
-        print(j)
-        for k in range(i, j):
-            profit += price_list[j] - price_list[k]
 
+        # i(첫 시행 이후 i는 이전의 최대값 + 1이 된다)부터 최대값의 인덱스 전까지의 값들과의 최대값 차이를 profit에 전부 더한다.
+        for k in range(i, max_i):
+            profit += price_list[max_i] - price_list[k]
+
+        # 현재 최대값 인덱스의 다음부터 반복을 재개한다.
         i = max_i + 1
 
     print('#%d %d' %(t, profit))
-
 
