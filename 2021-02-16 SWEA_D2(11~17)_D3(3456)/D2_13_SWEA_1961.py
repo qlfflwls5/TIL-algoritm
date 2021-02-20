@@ -46,20 +46,23 @@ for t in range(1, T+1):
         for j in range(N):
             arr_270[j][N-1-i] = arr_180[i][j]
 
-    result_list = []
+    # 아래 주석처리 말고 이렇게 프린트하자. 프린트 하는 법을 배우자.
     for i in range(N):
-        result_list = result_list + [arr_90[i]] + [arr_180[i]] + [arr_270[i]]
-
-    print('#%d' % t)
-    # 각 90도, 180도, 270도 이차원 배열의 행을 차례로 출력해야 한다.
-    for i in range(N):
-        result = ''
-        for j in range(3):
-            for k in range(N):
-                result += str(result_list[i*3+j][k])
-            if j != 2:
-                result += ' '
-        print(result)
+        print(''.join(map(str, arr_90[i])), ''.join(map(str, arr_180[i])), ''.join(map(str, arr_270[i])))
+    # result_list = []
+    # for i in range(N):
+    #     result_list = result_list + [arr_90[i]] + [arr_180[i]] + [arr_270[i]]
+    #
+    # print('#%d' % t)
+    # # 각 90도, 180도, 270도 이차원 배열의 행을 차례로 출력해야 한다.
+    # for i in range(N):
+    #     result = ''
+    #     for j in range(3):
+    #         for k in range(N):
+    #             result += str(result_list[i*3+j][k])
+    #         if j != 2:
+    #             result += ' '
+    #     print(result)
 
 
 # 승현님 코드
@@ -81,3 +84,29 @@ for t in range(1, int(input())+1):
             rotate[1] += str(square[size-a][size-b])
             rotate[2] += str(square[b-1][size-a])
         print(rotate[0], rotate[1], rotate[2])
+
+
+# 훈규님 코드
+# 내꺼랑 비슷한데 훨씬 깔끔하다
+def shift90(arr):
+    new_arr = [[0] * N for _ in range(N)]
+    for r in range(N):
+        for c in range(N):
+            new_arr[c][N - r - 1] = arr[r][c]
+    return new_arr
+
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+
+    nums = [list(map(int, input().split())) for _ in range(N)]
+
+    num_90 = shift90(nums)
+    num_180 = shift90(num_90)
+    num_270 = shift90(num_180)
+
+    print('#%d' % tc)
+    for i in range(N):
+        print(''.join(map(str, num_90[i])), ''.join(map(str, num_180[i])), ''.join(map(str, num_270[i])))
