@@ -790,3 +790,112 @@ for t in range(1, 11):
 + 느낀점 및 배운점
   + 이중 배열에서의 회문찾기가 매우 어려웠다.
   + 특히, 회문의 길이가 정해져있지 않은 경우, **나는 조금 색다른 풀이를 하였는데** 이 방법은 회문의 길이가 짧을수록 효율이 좋으며, 회문의 길이가 길다하더라고 일반적인 방법보다 조금 비효율적이므로 평균적으로 효율적인 코드라고 할 수 있다.
+
+
+
+## 2021-02-21(5)
+
++ 싸피 Day08의 알고리즘 문제들을 복습하였다.
++ 2차원 배열의 회전, 각 행의 길이가 다른 2차원 배열 등을 배웠다.
+
++ 2차원 배열의 회전과 같은 경우 두 가지 풀이가 있을 수 있다.
+  + 정말 배열을 회전시키기
+  + 배열이 회전되었을 때에 값이 어디로 이동하는지를 파악해 인덱싱을 이용해 값만 빼오기
+
+```python
+# 숫자 배열 회전 문제
+
+# 배열 자체를 회전시키는 풀이
+# 배열을 90도 회전시키는 함수
+def shift90(arr):
+    # 이중 배열은 깊은 복사가 힘들기때문에 아예 새로운 배열을 만들어 버린다.
+    new_arr = [[0] * N for _ in range(N)]
+    for r in range(N):
+        for c in range(N):
+            new_arr[c][N - r - 1] = arr[r][c]
+    return new_arr
+
+
+T = int(input())
+
+for tc in range(1, T + 1):
+    N = int(input())
+
+    nums = [list(map(int, input().split())) for _ in range(N)]
+
+    num_90 = shift90(nums)
+    num_180 = shift90(num_90)
+    num_270 = shift90(num_180)
+
+    print('#%d' % tc)
+    for i in range(N):
+        print(''.join(map(str, num_90[i])), ''.join(map(str, num_180[i])), ''.join(map(str, num_270[i])))
+        
+  
+# 회전되었을 때의 값만 빼오는 풀이
+T = int(input())
+for t in range(1, T+1):
+    N = int(input())
+    print('#%d' % t)
+    arr = [list(map(int, input().split())) for _ in range(N)]
+    # 진짜로 90도, 180도, 270도 돌리지 말고 각 행에 출력되는 값을 어떻게 뽑아올 수 있는지 생각해보자
+    # 각 i번째 행에 대하여 90도로 돌린 i번째 행, 180도로 돌린 i번째 행, 270도로 돌린 i번째 행을 출력하면 되는 것이다.
+    # 즉, 90도 180도 270도 돌리면 각각 어느 요소가 어디로 이동하는지의 규칙을 찾으면 된다.
+    for i in range(N):
+        result = ''
+        for j in range(N):
+            result += str(arr[N-j-1][i])
+        result += ' '
+        for j in range(N):
+            result += str(arr[N-i-1][N-j-1])
+        result += ' '
+        for j in range(N):
+            result += str(arr[j][N-i-1])
+
+        print(result)
+```
+
++ 행의 길이가 서로 다를 때 열을 읽는 방법에는 다음과 같은 방법이 있다.
+  + 제일 긴 행을 기준으로 하여 짧은 행들이 그 길이에 맞춰질 때까지 공백 데이터를 추가
+  + 제일 긴 행의 길이를 갖는 리스트를 만들어 리스트 인덱스에 대응하는 행의 값들을 가져오기
+
+```python
+# 제일 긴 행을 기준으로 하여 짧은 행들이 그 길이에 맞춰질 때까지 공백 데이터를 추가 
+T = int(input())
+for t in range(1, T+1):
+    N = 5
+    data_arr = [list(input()) for _ in range(N)]
+    
+    # 가장 긴 길이를 찾는다. data_arr을 가장 긴 길이 * 가장 긴 길이 형태로 만들기 위해
+    max_i = 0
+    for i in range(N):
+        if len(data_arr[max_i]) < len(data_arr[i]):
+            max_i = i
+
+    # 모든 row에 대하여 길이가 가장 긴 것에 맞춰질 때까지 공백을 삽입한다.
+    for data in data_arr:
+        while len(data) < len(data_arr[max_i]):
+            data += ['']
+
+    # 세로로 읽어와 result에 저장한다.
+    result = ''
+    for col in zip(*data_arr):
+        for i in range(N):
+            result += col[i]
+
+    print('#%d %s' %(t, result))
+    
+    
+# 제일 긴 행의 길이를 갖는 리스트를 만들어 리스트 인덱스에 대응하는 행의 값들을 가져오기
+for t in range(1, int(input())+1):
+    # 어차피 주어지는 글자는 15자 이하라고 하였다.
+    result = ['']*15
+    for _ in range(5):
+        word = input()
+        for i in range(len(word)):
+            # result의 i번째에 각 줄의 i번째 문자가 차례로 들어간다!
+            result[i] += word[i]
+
+    print('#%s %s' % (t, ''.join(result)))
+```
+
