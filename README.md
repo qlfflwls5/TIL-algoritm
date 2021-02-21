@@ -530,4 +530,263 @@ def selectionSort(arr):
 ## 2021-02-21(3)
 
 + 싸피 Day06의 알고리즘 문제들을 복습하였다.
-+ 
++ 문자열, Brute force, itoa/atoi 등을 배웠다.
++ 문자열을 활용한 문제로는 **문자열 내 패턴 찾기**, **회문 찾기**, **문자열 뒤집기**, **숫자로 변환하기** 등이 있다.
+
++ 패턴과 관련한 문제에는 **Brute force**, **KMP** 방식을 사용할 수 있다. KMP는 아직 제대로 배우지 않았다.
+
+```python
+# Brute Force
+
+# while문
+# T = 문자열, P = 패턴
+def bruteForce(T, p):
+    N = len(T)
+    M = len(P)
+    i = 0 # 문자열의 인덱스
+    j = 0 # 패턴의 인덱스
+    
+    while i < N and  j < M:
+        if T[i] != p[j]:
+            # 만약 패턴이 다르다면 i를 반복의 마지막에 패턴 검사 시작 인덱스로 갈 수 있도록 맞춤
+            i = i - j
+            # 만약 패턴이 다르다면 j를 반복의 마지막에 0이 되도록 -1로 맞춤
+            j = -1
+        i += 1
+        j += 1
+    
+    # 패턴을 찾아서 검색이 끝났을 때 j의 인덱스는 M이 되어있다. 마지막 인덱스에서 j += 1을 하며 끝나므로
+    if j == M:
+        return i # 패턴이 시작하는 인덱스
+    else:
+        return False # 패턴 못찾음
+    
+    
+#  for문
+def bruteForce(T, p):
+    N = len(T)
+    M = len(P)
+    for i in range(N-M+1):
+        cnt = 0
+        for j in range(M):
+            if T[i+j] != p[j]:
+                break
+            else:
+                cnt += 1
+         if cnt == M:
+            return i
+    return False
+```
+
++ atoi/itoa
+  + atoi: 문자에서 숫자로 바꾸기
+  + itoa: 숫자에서 문자로 바꾸기
+
+```python
+# 둘 다 모두 ASCII코드를 활용한다.
+def atoi(num):
+    value = 0
+    for i in range(len(num)):
+        value *= 10
+        value += ord(num[i]) - ord('0')
+    
+    return value
+
+
+def itoa(num):
+    result = ''
+    # 부호
+    sign = ''
+    if num < 0:
+        num = -num
+        sign = '-'
+    while num > 0:
+        result = chr(num%10 + ord('0')) + result
+        num //= 10
+    
+    return sign + result
+```
+
+
+
+## 2021-02-21(4)
+
++ 싸피 Day07의 알고리즘 문제들을 복습하였다.
+
++ string, 패턴 찾기, 2차원 배열에서의 회문 등을 배웠다.
+
++ **글자수 세기** 같은 경우, **딕셔너리**를 사용하면 굉장히 간편하다.
+
+  + `dict.fromkeys(arr, 초기값)`을 통해 쉽게 각 글자에 대한 딕셔너리를 만들자
+
++ **패턴 찾기**의 경우에도, **count 메서드**를 사용할 수 있다면 매우 간편하게 해결할 수 있다.
+
+  + `if string.count(pattern): return 1`을 통해 count가 1이상이면 있다고 반환한다.
+
++ 이중 배열에서 회문 찾기의 경우, 회문을 검사하는 작업을 각 행과 각 열에서 실시한다고 생각하면 된다.
+
+  회문의 길이(M)이 주어져 있는 경우
+
+```python
+def palindrome(row, N, M):
+    result = ''
+    for j in range(N-M+1):
+        for k in range(M//2):
+            if row[j+k] != row[j+M-1-k]:
+                break
+        else:
+            result = ''.join(row[j:j + M])
+
+    return result
+
+
+T = int(input())
+for t in range(1, T+1):
+    # N = arr의 길이 M = 팰린드롬의 길이
+    N, M = map(int, input().split())
+    arr = [list(input()) for _ in range(N)]
+    ans = ''
+    while not len(ans):
+        for i in range(N):
+            ans = palindrome(arr[i], N, M) + palindrome(list(zip(*arr))[i], N, M)
+            if ans:
+                break
+
+    print('#%d %s' %(t, ans))
+```
+
+​	회문의 길이가 주어져 있지 않은 경우
+
+```python
+# 일반적인 풀이
+def my_find(M):
+    # 전체크기가 N이다.
+    for i in range(N):
+        for j in range(N - M + 1):
+            # 스왑 통한 회문 검사
+            # 가로 검사
+            for k in range(M // 2):
+                # 앞뒤검사
+                if words[i][j + k] != words[i][j + M - 1 - k]:
+                    break
+                # 회문임
+                elif k == M // 2 - 1:
+                    return M
+            # 세로 검사
+            for k in range(M // 2):
+                if words[j + k][i] != words[j + M - 1 - k][i]:
+                    break
+                elif k == M // 2 - 1:
+                    return M
+    return 0
+
+
+for _ in range(10):
+    tc_num = int(input())
+
+    N = 100
+    words = [input() for i in range(N)]
+
+    # 가장 길이가 긴 회문부터 검사를 한다.
+    for i in range(N, 0, -1):
+        ans = my_find(i)
+
+        if ans:
+            break
+
+    print('#{} {}'.format(tc_num, ans))
+    
+    
+# 속도가 빠른 내 풀이
+# 풀이한 논리
+# 팰린드롬은 결국 '중심 문자'로부터 양옆으로 뻗어져나갈 때 양옆이 같은 문자열이다. (중심 문자에 대한 정의는 center_palindrome함수 내에 있다)
+# 그러므로, 중심 문자를 구하는 부분과 그를 기준으로 양옆으로 뻗어져 나가며 팰린드롬을 구하는 부분으로 나뉘어 작동하는 방식이다.
+
+# 한 문자열, 문자열의 길이, 팰린드롬을 검사할 인덱스를 인자로 받는다.
+def center_palindrome(string, N, i):
+    # 이하 center는 현재 i번째의 문자이며 '중심 문자'란 center가 반복되는 총 문자를 말한다. 예를 들어, 'ABBBA'에 i가 2라면 center는 'B', 중심 문자는 'BBB'이다.
+    center = string[i]
+    # center의 양 옆에서 시작, temp_i는 왼쪽으로 나아갈 것이고 temp_j는 오른쪽으로 나아갈 것이며, temp_len은 중심 문자의 총 길이다.
+    temp_i, temp_j, temp_len = i - 1, i + 1, 1
+    # 나아가다 끝에 도달하면 더 이상 나아가지 말아야 하므로 각각 temp_i와 temp_j의 플래그를 만든다. temp_i는 0에, temp_j는 N-1에 도달하면 끝까지 간 것이다.
+    is_i_end, is_j_end = 0, 0
+    while True:
+        # 중심 문자의 왼쪽 문자(string[temp_i])가 center와 같다면 중심 문자의 길이를 1 늘리고 temp_i를 왼쪽 칸으로 옮긴다.
+        if string[temp_i] == center and not is_i_end:
+            # temp_i가 0이면서 0번째 문자가 center와 같다면 중심 문자의 길이만 1 늘려주고 is_i_end를 1로 바꿔 이후 temp_i에 대한 작업은 종료한다.
+            if temp_i == 0:
+                is_i_end = 1
+                temp_len += 1
+            else:
+                temp_i -= 1
+                temp_len += 1
+        # 중심 문자의 오른쪽 문자(string[temp_j)가 center와 같다면 중심 문자의 길이를 1 늘리고 temp_j를 오른쪽 칸으로 옮긴다.
+        if string[temp_j] == center and not is_j_end:
+            # temp_j가 N-1이면서 N-1번째 문자가 center와 같다면 중심 문자의 길이만 1 늘려주고 is_j_end를 1로 바꿔 이후 temp_j에 대한 작업은 종료한다.
+            if temp_j == N-1:
+                is_j_end = 1
+                temp_len += 1
+            else:
+                temp_j += 1
+                temp_len += 1
+        # 매 temp_i, temp_j에 대한 작업에서 중심 문자의 탐색이 끝나는 세 가지 경우의 수가 있다. 양 끝에 도달하지 않은 채로 끝난 경우, 한 쪽이 끝에 도달해서 끝난 경우
+        # 전자의 경우 현재 temp_i와 temp_j번째 문자가 center와 다른 경우이다. 예) ABBBA에서 temp_i, temp_j는 각각 왼쪽 A, 오른쪽 A의 인덱스가 된다.
+        # 후자의 경우 끝에 도달하지 않은 쪽의 문자가 center와 다른 경우이다. 예) ABBBB에서 temp_i는 A의 인덱스가 되고, BBBBA라면 temp_j는 A의 인덱스가 된다.
+        # 각 경우에서 temp_i가 중심 문자의 시작, temp_j가 중심문자의 끝 번째가 되도록 조정한다.
+        if string[temp_i] != center and string[temp_j] != center:
+            temp_i += 1
+            temp_j -= 1
+            break
+        elif temp_i == 0 and string[temp_j] != center:
+            temp_j -= 1
+            break
+        elif temp_j == N-1 and string[temp_i] != center:
+            temp_i += 1
+            break
+
+    return temp_i, temp_j, temp_len
+
+
+# 중심 문자로부터 양옆으로 뻗어나가 팰린드롬을 검사할 함수
+def max_palindrome(string):
+    N = len(string)
+    max_len = 0
+    i = 1
+    while i < N-1:
+        temp_i, temp_j, temp_len = center_palindrome(string, N, i)
+        # i를 중심 문자의 + 1번째로 계속 이동한다. 불필요한 반복을 줄일 수 있다.
+        # 예) BBBABC가 있을 때, 첫 번째 B에서의 팰린드롬 검사를 실시했다면, 이후 중심 문자 내 연속되는 B에서는 검사를 안해도 된다. 다음 검사는 A부터 한다.
+        i = temp_j + 1
+
+        while 0 < temp_i and temp_j < N - 1:
+            temp_i -= 1
+            temp_j += 1
+            if string[temp_i] != string[temp_j]:
+                break
+            temp_len += 2
+
+        if max_len < temp_len:
+            max_len = temp_len
+
+    return max_len
+
+
+for t in range(1, 11):
+    n = int(input())
+    arr_row = [input() for _ in range(100)]
+    max_result = 0
+    # 입력으로 받은 이중배열과 열 기준으로 바꾼 이중배열을 하나씩 가져와서
+    for arr in arr_row, zip(*arr_row):
+        # 해당 이중배열의 문자열을 하나씩 가져와서 가장 긴 팰린드롬의 길이를 구하기
+        for string in arr:
+            temp_result = max_palindrome(string)
+            if max_result < temp_result:
+                max_result = temp_result
+
+    print('#%d %d' % (t, max_result))
+```
+
++ 쇠막대기 자르기 문제는 매우 재밌는 문제였는데, 이런 문제일수록 규칙을 찾아내는 것이 중요하다.
++ 느낀점 및 배운점
+  + 이중 배열에서의 회문찾기가 매우 어려웠다.
+  + 특히, 회문의 길이가 정해져있지 않은 경우, **나는 조금 색다른 풀이를 하였는데** 이 방법은 회문의 길이가 짧을수록 효율이 좋으며, 회문의 길이가 길다하더라고 일반적인 방법보다 조금 비효율적이므로 평균적으로 효율적인 코드라고 할 수 있다.
