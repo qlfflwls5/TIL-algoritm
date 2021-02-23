@@ -1,3 +1,4 @@
+# 최대수 구하기
 # 10개의 수를 입력 받아, 그 중에서 가장 큰 수를 출력하는 프로그램을 작성하라.
 
 
@@ -37,4 +38,4 @@ for i in range(T):
     for num in num_list:
         if num > max_number:
             max_number = num
-    print(f'#{i+1} {max_number}')
+    print('#%d %d' % (i+1, max_number))

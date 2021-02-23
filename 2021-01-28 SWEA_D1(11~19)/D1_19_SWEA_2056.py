@@ -1,3 +1,4 @@
+# 연월일 달력
 # 연월일 순으로 구성된 8자리의 날짜가 입력으로 주어진다.
 
 
@@ -46,21 +47,21 @@ for i in range(T):
     day = date[6:]
     if int(month) in [1, 3, 5, 7, 8, 10, 12]:
         if 1 <= int(day) <= 31:
-            print(f'#{i + 1} {year}/{month}/{day}')
+            print('#%d %s/%s/%s' % (i+1, year, month, day))
         else:
-            print(f'#{i + 1} -1')
+            print('#%d -1' % i+1)
     elif int(month) in [4, 6, 9, 11]:
         if 1 <= int(day) <= 30:
-            print(f'#{i + 1} {year}/{month}/{day}')
+            print('#%d %s/%s/%s' % (i+1, year, month, day))
         else:
-            print(f'#{i + 1} -1')
+            print('#%d -1' % i+1)
     elif int(month) == 2:
         if 1 <= int(day) <= 28:
-            print(f'#{i + 1} {year}/{month}/{day}')
+            print('#%d %s/%s/%s' % (i+1, year, month, day))
         else:
-            print(f'#{i + 1} -1')
+            print('#%d -1' % i+1)
     else:
-        print(f'#{i + 1} -1')
+        print('#%d -1' % i+1)
 
 
 # 세상에 02 == 2는 안되지만, int('02') == 2는 된다.

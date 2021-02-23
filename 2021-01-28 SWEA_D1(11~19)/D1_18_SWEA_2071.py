@@ -1,3 +1,4 @@
+# 평균값 구하기
 # 10개의 수를 입력 받아, 평균값을 출력하는 프로그램을 작성하라.
 # (소수점 첫째 자리에서 반올림한 정수를 출력한다.)
 
@@ -39,7 +40,7 @@ for i in range(T):
         count += 1
     
     # round(n, r) => n을 반올림하여 r자리까지 나타낸다.
-    print(f'#{i + 1} {round(total / count)}')
+    print('#%d %d' % (i+1, round(total/count)))
 
 
 # round를 쓰지 말라고 하면?

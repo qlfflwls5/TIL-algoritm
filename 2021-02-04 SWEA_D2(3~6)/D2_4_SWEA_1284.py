@@ -35,7 +35,7 @@ for x in range(1, T + 1):
     # 더 큰 것을 반환해 result에 넣는다.
     result = costA if costA < costB else costB
 
-    print(f'#{x} {result}')
+    print('#%d %d' %(x, result))
 
 
 # 해성님, 주엽님의 입력 받기

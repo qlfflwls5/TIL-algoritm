@@ -88,7 +88,7 @@ for k in range(1, T + 1):
         bin_num = binary_str[i * 8:i * 8 + 8]
         result += chr(int(bin_num, 2))
     
-    print(f'#{k} {result}')
+    print('#%d %d' %(k, result))
         
 
 # 함수 import해서 하는법

@@ -28,6 +28,7 @@
 # 2번째 케이스는 1,2일에 각각 한 개씩 사서 세 번째 날에 두 개를 팔면 10의 이익을 얻을 수 있다.
 
 
+# 1
 # 최대값을 중단점으로 삼아 이전 값들에 대하여 각각의 최대값-값을 더하면 된다.
 # 이 한 번의 시행 후에는 다음 최대값을 찾아 진행한다.
 T = int(input())
@@ -52,4 +53,23 @@ for t in range(1, T+1):
         i = max_i + 1
 
     print('#%d %d' %(t, profit))
+
+
+# 2
+# price_list를 반전시켜라. -> 이 방법이 훨씬 좋다.
+# 앞에서부터 풀이하기 시작하면 최대값을 찾고서 앞의 값들을 전부 최대값에서 빼야하는 작업을 해야하지만,
+# 뒤에서부터 풀이하기 시작하면 계속해서 작은 값이 나올 때까지 차이를 result에 더하면 답이 된다. 큰 값이 나온다면 비교하는 값을 갱신한다.
+T = int(input())
+for t in range(1, T+1):
+    N = int(input())
+    price_list = list(map(int, input().split()))
+    stack = [price_list[N-1]]
+    result = 0
+    for i in range(N-2, -1, -1):
+        if stack[-1] < price_list[i]:
+            stack.append(price_list[i])
+        else:
+            result += stack[-1] - price_list[i]
+
+    print('#%d %d' %(t, result))
 

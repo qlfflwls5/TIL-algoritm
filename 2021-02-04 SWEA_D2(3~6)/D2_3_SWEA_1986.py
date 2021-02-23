@@ -46,4 +46,4 @@ for k in range(1, T + 1):
         else:
             total -= i
     
-    print(f'#{k} {total}')
+    print('#%d %d' %(k, total))

@@ -56,7 +56,7 @@ for i in range(1, T + 1):
             num_dict[key] += 1
 
     # 결과 출력
-    print(f'#{i} {num_dict[2]} {num_dict[3]} {num_dict[5]} {num_dict[7]} {num_dict[11]}')
+    print('#%d %d %d %d %d %d' % (i, num_dict[2], num_dict[3], num_dict[5], num_dict[7], num_dict[11]))
 
 
 # 실행시간과 메모리는 하나하나 계산하는 것이 훨씬 효율적이다.

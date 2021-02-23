@@ -53,7 +53,7 @@ for x in range(1, T + 1):
             stack_set.add(copy_n % 10)
             copy_n //= 10
         
-    print(f'#{x} {n * count}')
+    print('#%d %d' %(x, n*count))
 
 
 # 함수의 사용 때문에 리스트를 주로 사용하는게 좋다고 한다!

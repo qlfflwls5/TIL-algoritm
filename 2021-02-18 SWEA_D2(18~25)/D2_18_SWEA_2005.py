@@ -28,6 +28,7 @@
 # (t는 테스트 케이스의 번호를 의미하며 1부터 시작한다.)
 
 
+# 1
 # [1]부터 시작하여 끝에 [1]을 붙여가며, 다음 arr에서 range(1~len(arr)-1)의 인덱스 i를 가지는 각 요소들에 i-1번째 요소를 더하면 된다.
 T = int(input())
 for t in range(1, T+1):
@@ -47,3 +48,66 @@ for t in range(1, T+1):
         # arr의 해당 요소들은 temp_arr의 이전 인덱스의 값들을 더한다.
         for j in range(1, i+1):
             arr[j] += temp_arr[j-1]
+
+
+# 2
+# 스택 사용하기
+def push(v):
+    stack.append(v)
+
+
+def pop():
+    if not stack:
+        return
+    return stack.pop(-1)
+
+
+T = int(input())
+for t in range(1, T + 1):
+    N = int(input())
+    result = []
+    stack = []
+    arr = [1]
+    result += [arr]
+    for i in range(N - 1):
+        for v in arr:
+            push(v)
+
+        arr = stack + [0]
+        for j in range(len(stack)):
+            arr[-j - 1] += pop()
+
+        result += [arr]
+
+    print('#%d' % t)
+    for arr in result:
+        print(*arr)
+    # print('\n'.join(*arr)) -> 이거 중요. 꼭 하자.
+    # 혹은, print('\n'.join(' '.join(map(str, num)) for num in tri)) -> 꼭!
+
+
+# 3
+# 초기값 안줘도 되는 코드 -> 이거 좋다.
+# 이렇게 미리 자리를 다 마련해두고 하는 것이 append를 통해 리스트의 크기를 변경하는 방식보다 더 효율적이다.
+T = int(input())
+for t in range(1, T + 1):
+    N = int(input())
+    tri = [[1] * i for i in range(1, N + 1)]  # [[1], [1, 1], [1, 1, 1], [1, 1, 1, 1]]
+    for i in range(2, N):
+        for j in range(1, i):
+            tri[i][j] = tri[i - 1][j - 1] + tri[i - 1][j]
+    print('#%d' % t)
+    for num in tri:
+        print(' '.join(map(str, num)))
+
+
+# 4
+for t in range(1, int(input()) + 1):
+    N = int(input())
+    result = [[1]]
+    for i in range(1, N):
+        temp = [1] + [result[i - 1][j - 1] + result[i - 1][j] for j in range(1, i)] + [1]
+        result.append(temp)
+
+    print('#%d' % t)
+    print('\n'.join(' '.join(map(str, result[k])) for k in range(N)))

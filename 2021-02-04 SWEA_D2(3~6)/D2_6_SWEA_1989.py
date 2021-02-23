@@ -38,14 +38,14 @@ for x in range(1, T + 1):
     while len(word) > 2:
         # 맨 앞 글자와 맨 뒷 글자가 다르면 0을 출력하고 break
         if word[0] != word[-1]:
-            print(f'#{x} 0')
+            print('#%d 0' % x)
             break
         # 같다면 word를 두 번째 글자부터 마지막에서 두 번째 글자까지의 단어로 바꾼다.
         else:
             word = word[1:-1]
     # break없이 반복문이 끝나면 1을 출력
     else:
-        print(f'#{x} 1')
+        print('#%d 1' % x)
 
 
 # 쉽게 끝내기 [::-1]활용

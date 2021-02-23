@@ -1,3 +1,4 @@
+# 몫과 나머지 출력하기
 # 2개의 수 a, b를 입력 받아, a를 b로 나눈 몫과 나머지를 출력하는 프로그램을 작성하라.
 
 
@@ -33,7 +34,7 @@
 T = int(input())
 for i in range(T):
     a, b = map(int, input().split())
-    print(f'#{i + 1} {a // b} {a % b}')
+    print('#%d %d %d' % (i+1, a/b, a%b))
 
 
 # 한 번에 입력받고 한 번에 출력하고 싶다면
@@ -47,5 +48,5 @@ for i in range(T):
 num = 1
 # 리스트들을 순회하며 각 리스트 별로 0번째 값에서 1번째 값에 대한 연산 결과를 출력한다.
 for i in input_list:
-    print(f'#{num} {i[0] // i[1]} {i[0] % i[1]}')
+    print('#%d %d %d' % (num, i[0]//i[1], i[0]&i[1]))
     num += 1

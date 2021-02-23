@@ -1,3 +1,4 @@
+# 홀수만 더하기
 # 10개의 수를 입력 받아, 그 중에서 홀수만 더한 값을 출력하는 프로그램을 작성하라.
 
 
@@ -37,4 +38,4 @@ for i in range(T):
         if num % 2:
             total += num
     
-    print(f'#{i + 1} {total}')
+    print('#%d %d' % (i+1, total))
