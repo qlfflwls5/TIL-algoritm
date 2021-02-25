@@ -30,14 +30,14 @@ T = int(input())
 for t in range(1, T+1):
     arr = [list(map(int, input().split())) for _ in range(N)]
     result = 1
-    cnt_list_row = [0]*9
-    cnt_list_col = [0]*9
-    cnt_list_square = [0]*9
     for i in range(N):
+        cnt_list_row = [0] * 9
+        cnt_list_col = [0] * 9
         for j in range(N):
             cnt_list_row[arr[i][j]-1] += 1
             cnt_list_col[arr[j][i]-1] += 1
             if i % 3 == 0 and j % 3 == 0:
+                cnt_list_square = [0] * 9
                 for k in range(i, i+3):
                     for l in range(j, j+3):
                         cnt_list_square[arr[k][l]-1] += 1
@@ -46,8 +46,6 @@ for t in range(1, T+1):
                     if cnt > 1:
                         result = 0
 
-                cnt_list_square = [0] * 9
-
         for cnt in cnt_list_row:
             if cnt > 1:
                 result = 0
@@ -55,9 +53,6 @@ for t in range(1, T+1):
         for cnt in cnt_list_col:
             if cnt > 1:
                 result = 0
-
-        cnt_list_row = [0] * 9
-        cnt_list_col = [0] * 9
 
     print('#%d %d' %(t, result))
     
