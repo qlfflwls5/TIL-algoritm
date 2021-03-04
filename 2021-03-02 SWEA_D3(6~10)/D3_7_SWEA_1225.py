@@ -51,6 +51,31 @@ for _ in range(1, 11):
 
 
 # 2
+# 사실 queue 문제였다.
+# 8번의 싸이클을 돌면 모두 제자리로 돌아오는 큰 싸이클이 되며 각 자리가 15씩 감소한다.
+for _ in range(1, 11):
+    t = int(input())
+    num = list(map(int, input().split()))
+    # 가장 작은 숫자를 15로 나눈 몫보다 1적은 수를 구해 그 수*15를 모든 요소에서 뺄 것이다.
+    # 그러면 마지막 제자리 싸이클을 돌기 전 원래의 순서대로 되어있는 상태가 된다.
+    min_15x = min(num)//15 - 1
+    queue = list(map(lambda x: x - 15*min_15x, num))
+    # 싸이클을 구현해 0이 생길 때까지 돌린다. 위의 작업을 안하고 아래 작업만 해도 되긴 하다.
+    flag = 1
+    while flag:
+        for i in range(5):
+            temp = queue.pop(0)-(i+1)
+            if temp <= 0:
+                queue.append(0)
+                flag = 0
+                break
+            else:
+                queue.append(temp)
+
+    print('#%d %s' % (t, ' '.join(map(str, queue))))
+
+
+# 3
 # 그냥 규칙만 쓴 코드
 def cycle():
     for i in range(1, 6):
