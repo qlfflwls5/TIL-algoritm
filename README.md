@@ -1089,3 +1089,124 @@ TypeError: 'zip' object is not subscriptable
 + 느낀점 및 배운점
   + 지금의 문제들은 수학적인 풀이 그 자체만을 물어보는 문제이기 때문에 푸는 데 어렵지 않다.
   + 하지만 이러한 것들이 기존의 난이도가 높았던 알고리즘 문제에 접합되어 섞여 나온다면 굉장히 고난이도의 문제로 변할 수 있을 것 같기 때문에, 지금 난이도가 낮다 하더라고 쉽게 넘기지 않고 수학적인 풀이들을 익혀야겠다는 생각이 들었다.
+
+
+
+## 2021-03-11
+
++ 삼성 소프트웨어 역량 시험 IM A형 모의평가 대비 문제를 풀었다. SSAFY D4 난이도급 문제들이다.
++ **수영장, 요리사**
++ **DFS, DP, 조합** 등의 알고리즘 기법들을 사용해야 하는 문제들이었다.
++ IM A형 대비 문제라 그런지 DFS, DP, 조합 등을 이용해야 해서 난이도가 매우 높았다.
++ 스터디 내에서도 두 문제를 전부 푼 사람은 나 포함 두 명 밖에 없었다.
++ 수영장
+  + DFS로 풀이한 경우: 가지치기를 매우 잘 해야 하는 문제였다. 요소를 하나하나 따져 더 이상 나아가지 않아도 되는 길은 탐색하지 않는 것이 시간 절약의 관건이다.
+  + DP로 풀이한 경우: 나는 DP로 풀이하지 못하였다. DP의 경우 무조건 이전의 시행들과 관련하여 규칙을 짜는 것이므로, 이후의 시행을 신경쓴다거나 하지 말자. DP를 배우지 않은 상태라 이부분이 헷갈려 풀지 못하였다.
+
+```python
+# DFS
+# 1 ~ 12월을 인덱스 상 0 ~ 11월로 볼 것이다.
+def cost(month, S):
+    # 가지치기1: 이번 달에 수영장을 가지 않으면 바로 다음 달로 넘어가기
+    if month < 12 and not c[month]:
+        cost(month+1, S)
+        return
+
+    # 가지치기2: 전 달까지의 요금이 이미 최소를 넘었으면 더 이상 탐색x
+    global min_cost
+    if S > min_cost:
+        return
+
+    # 종료조건
+    if month >= 12:
+        min_cost = S
+        return
+    
+    # 작은 가지치기3: 이번 달의 1일권 사용 요금이 1달권 사용 요금보다 적다면 1일권을 택, 아니라면 1달권을 택
+    if p[0]*c[month] < p[1]:
+        cost(month+1, S+p[0]*c[month])
+    else:
+        cost(month+1, S+p[1])
+    cost(month+3, S+p[2])
+
+
+for t in range(1, int(input())+1):
+    p = list(map(int, input().split()))
+    c = list(map(int, input().split()))
+    min_cost = p[3]
+    cost(0, 0)
+
+    print('#%d %d' % (t, min_cost))
+```
+
+```python
+# DP
+# 전 달까지의 요금 + 이번 달의 1일권 * 날짜
+# 전 달까지의 요금 + 1달권
+# 3달 전까지의 요금 + 3달권(현재 달까지 3달권에 포함시키므로 2달 전에 3달권을 산 것이다.)
+# 이 셋 중 최소의 값이 현재 달의 DP다.
+# 처음 1, 2월만 3달 전의 값이 없으므로 if처리 해주면 된다.
+# 마지막 11월, 12월에서 만약 3달권이 1달권이나 1일권보다 싼 케이스가 있을 경우를 대비해 전체를 15월까지 있는 것으로 보고 쭉 진행한다.
+for t in range(1, int(input())+1):
+    day, m_1, m_3, year = map(int, input().split())
+    swim = [0] + list(map(int, input().split())) + [0, 0]
+    swim_pay = [0]*15
+    for month in range(1, 15):
+        if month >= 3:
+            swim_pay[month] = min(swim_pay[month-1]+day*swim[month], swim_pay[month-1]+m_1, swim_pay[month-3]+m_3)
+        else:
+            swim_pay[month] = min(swim_pay[month-1]+day*swim[month], swim_pay[month-1]+m_1)
+    print("#%d %d" %(t, min(swim_pay[12], swim_pay[13], swim_pay[14], year)))
+```
+
++ 요리사
+  + 조합을 사용하는 문제로, 재귀가 이루어지기 때문에 어디서 이중 for문을 돌리느냐 등에 따라 실행시간에 많은 차이가 난다. 꼼꼼히 따져 어디에서 반복을 진행하는 것이 불필요한 반복을 없앨 수 있는 것인가를 잘 찾아야 한다.
+
+```python
+# N개의 재료 중에서 N//2개를 뽑는 함수
+def combi(level, start):
+    # 종료조건
+    if level >= N//2:
+        global min_dif
+        result = get_taste(A, B)
+        if result < min_dif:
+            min_dif = result
+        return
+
+    for i in range(start, N-N//2+level+1):
+        # 이렇게 remove append를 일일이 해주는 것이 나중에 A에서 없는 것을 for문을 돌며 찾아 B를 만드는 것보다 훨씬 실행시간이 짧다.
+        A.remove(i)
+        B.append(i)
+        combi(level+1, i+1)
+        A.append(i)
+        B.remove(i)
+
+
+def get_taste(A, B):
+    taste_A, taste_B = 0, 0
+    for i in range(N//2):
+        for j in range(N//2):
+            taste_A += arr[A[i]][A[j]]
+            taste_B += arr[B[i]][B[j]]
+
+    return abs(taste_A - taste_B)
+
+
+for t in range(1, int(input())+1):
+    N = int(input())
+    arr = [list(map(int, input().split())) for _ in range(N)]
+    min_dif = 987654321
+    # A만 구성하고, B는 A에 없는 것으로 만들 것이다.
+    A = list(range(N))
+    B = []
+    combi(0, 0)
+
+    print('#%d %d' % (t, min_dif))
+```
+
++ 느낀점 및 배운점
+  + 현재의 나에게 난이도가 매우 높은 문제들이었다.
+  + 특히, 이제는 얼마나 효율적으로 코드를 짜서 실행시간을 줄일 수 있는지가 관건이 되었다.
+  + DFS의 경우 **가지치기**가 매우 중요하다. 오류가 생기지 않는 선에서 잘 쳐내야 한다.
+  + 또한, 재귀를 사용하는 경우에는 재귀 안에서 반복문이 계속 실행되는 것을 염두에 두고 반복문의 위치를 밖으로 뺄 수 있다면 빼는 것이 코드를 효율적으로 만드는 가장 좋은 방법이다. 이를 잘 계산해보자.
+  + 이제야 DFS를 활용하는 방법에 대해서 감이 오는 것 같다. 이전까지는 매우 막막했는데, 갑자기 길이 보이기 시작했다!
