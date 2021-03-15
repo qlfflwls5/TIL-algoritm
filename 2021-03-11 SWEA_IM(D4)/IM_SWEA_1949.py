@@ -49,3 +49,62 @@
 # 테스트 케이스 개수만큼 T개의 줄에 각각의 테스트 케이스에 대한 답을 출력한다.
 # 각 줄은 "#t"로 시작하고 공백을 하나 둔 다음 정답을 출력한다. (t는 1부터 시작하는 테스트 케이스의 번호이다)
 # 출력해야 할 정답은 만들 수 있는 가장 긴 등산로의 길이이다.
+
+
+# 가장 높은 곳을 찾는다.
+# DFS가 좋을 것 같다.
+# 사방 탐색을 통해 낮으면 이동하고, 같거나 높다면 아직 깎는 행위를 안했을 때, 깎아서 더 낮아진다면 깎고 간다.
+# 끝까지 이동했을 때의 거리가 현재의 최대 거리보다 길다면 갱신한다.
+def DFS(r, c):
+    # 가지치기: 현재 위치의 높이 + 깎았으면 0, 안깎았으면 1 + 이전까지의 길이가 max_path보다 같거나 작으면 더 진행 x
+    global chance, max_path
+    if arr[r][c] + chance + visited[r][c] - 1 <= max_path:
+        return
+
+    for dr, dc in drc:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < N and 0 <= nc < N:
+            if not visited[nr][nc]:
+                if arr[nr][nc] < arr[r][c]:
+                    visited[nr][nc] = visited[r][c] + 1
+                    DFS(nr, nc)
+                    visited[nr][nc] = 0
+                elif chance and arr[nr][nc] - arr[r][c] < K:
+                    temp = arr[nr][nc]
+                    arr[nr][nc] = arr[r][c] - 1
+                    visited[nr][nc] = visited[r][c] + 1
+                    chance = 0
+                    DFS(nr, nc)
+                    arr[nr][nc] = temp
+                    visited[nr][nc] = 0
+                    chance = 1
+                else:
+                    if visited[r][c] > max_path:
+                        max_path = visited[r][c]
+
+
+drc = [[-1, 0], [0, 1], [1, 0], [0, -1]]
+for t in range(1, int(input())+1):
+    N, K = map(int, input().split())
+    # max_h는 최대 높이, max_list는 최대 높이를 가진 곳의 좌표 리스트
+    max_h, max_list = 0, []
+    arr = []
+    for i in range(N):
+        row = list(map(int, input().split()))
+        for j in range(N):
+            if row[j] > max_h:
+                max_h, max_list = row[j], [(i, j)]
+            elif row[j] == max_h:
+                max_list.append((i, j))
+        arr.append(row)
+    # max_path는 최대 길이 산책로, chance는 깎는 기회
+    max_path, chance = 0, 1
+    visited = [[0]*N for _ in range(N)]
+    for r, c in max_list:
+        # 한 최고점에서의 탐색 시작을 위해 현재 최고점을 산책로 길이 1로 놓는다.
+        visited[r][c] = 1
+        DFS(r, c)
+        # 한 최고점에서의 탐색이 끝나면 산책로 길이 0으로 초기화.
+        visited[r][c] = 0
+
+    print('#%d %d' % (t, max_path))

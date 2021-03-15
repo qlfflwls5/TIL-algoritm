@@ -51,3 +51,28 @@
 # 테스트 케이스의 개수만큼 T줄에 T개의 테스트 케이스 각각에 대한 답을 출력한다.
 # 각 줄은 “#x”로 시작하고 공백을 하나 둔 다음 정답을 기록한다. (x는 1부터 시작하는 테스트 케이스의 번호이다)
 # 출력해야 할 정답은 탈주범이 위치할 수 있는 장소의 개수이다.
+
+
+# 타일별로 위, 아래, 오른, 왼쪽에 올 수 있는 타일이 무엇인지를 딕셔너리로 정한다.
+# 예를들어, 5번 타일은 아래와 오른쪽을 연결하는 타일이므로, 어떤 타일에 붙을 때는 위와 왼쪽에 올 수 있는 타일이다.
+# 현재 타일이 갈 수 있는 곳과 붙을 타일이 올 수 있는 곳이 같으면 된다.
+drc = [[-1, 0], [1, 0], [0, 1], [0, -1]] # 상하우좌
+tile = {1: {0, 1, 2, 3}, 2: {0, 1}, 3: {2, 3}, 4: {0, 2}, 5: {1, 2}, 6: {1, 3}, 7: {0, 3}} # 각 타일에서 갈 수 있는 방향을 set으로 저장. set이 in연산 속도가 빠르다.
+n_tile = {0: {1, 2, 5, 6}, 1: {1, 2, 4, 7}, 2: {1, 3, 6, 7}, 3: {1, 3, 4, 5}} # 각 방향에 붙을 수 있는 타일을 set으로 저장.
+for t in range(1, int(input())+1):
+    N, M, R, C, L = map(int, input().split())
+    arr = [list(map(int, input().split())) for _ in range(N)]
+    visited = [[0]*M for _ in range(N)]
+    queue = [(R, C, 1)]
+    visited[R][C] = 1
+    cnt = 1
+    while queue:
+        r, c, l = queue.pop(0)
+        for i in tile[arr[r][c]]:
+            nr, nc = r+drc[i][0], c+drc[i][1]
+            if 0 <= nr < N and 0 <= nc < M and not visited[nr][nc] and arr[nr][nc] in n_tile[i] and l < L:
+                cnt += 1
+                queue.append((nr, nc, l+1))
+                visited[nr][nc] = 1
+
+    print('#%d %d' % (t, cnt))
