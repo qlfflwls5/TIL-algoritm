@@ -108,3 +108,31 @@ for t in range(1, int(input())+1):
         visited[r][c] = 0
 
     print('#%d %d' % (t, max_path))
+
+# visited가 난잡하면 DFS의 인자에 cnt를 넣어서 세자.
+# 은교님
+# def DFS_recur(r, c, cnt, flag):
+#     global mx_length
+#     visited[r][c] = 1
+#     # 최댓값 갱신
+#     if cnt > mx_length:
+#         mx_length = cnt
+#
+#     for dr, dc in drc:
+#         nr, nc = r + dr, c + dc
+#         if 0 <= nr < N and 0 <= nc < N and visited[nr][nc] == 0:
+#             # 작으면 DFS 호출
+#             if mountain[nr][nc] < mountain[r][c]:
+#                 DFS_recur(nr, nc, cnt + 1, flag)
+#             # 크거나 같은데 차이가 K 미만, 아직 안 깎았으면 깎고 DFS 호출
+#             elif mountain[nr][nc] - mountain[r][c] < K and flag:
+#                 tmp = mountain[nr][nc] - mountain[r][c] + 1
+#                 mountain[nr][nc] -= tmp
+#                 DFS_recur(nr, nc, cnt + 1, 0)
+#                 # 깎았던 거 원상 복귀
+#                 mountain[nr][nc] += tmp
+#             else:
+#                 continue
+#         else:
+#             continue
+#     visited[r][c] = 0
