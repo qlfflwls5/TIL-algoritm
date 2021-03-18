@@ -1255,3 +1255,83 @@ for t in range(1, int(input())+1):
 
 + **추가** - 최근 3월 11일, 3월 15일에 푼 문제들에 대해 IM 대비라고 잘못 적었다. IM보다 한 단계 위인 AD단계의 문제들이다. 이번 커밋으로 전부 수정한다.
 
+
+
+## 2021-03-18
+
++ Difficulty 3의 정답율순 33번 ~ 41번 문제를 풀었다. SSAFY과정 중 완료한 문제들은 제외했다.
++ **다솔이의 월급 상자, 문자열의 거울상, 늘어지는 소리 만들기, 수의 새로운 연산, 외로운 문자**
++ 이번에도 역시 알고리즘이라는 느낌보다는 수학적으로 해법을 알아내는 데에 중점을 둔 문제인 것 같았다.
+  + 하지만, 그러면서도 점점 알고리즘적 기법을 요하는 문제가 되어 가고 있다. 난이도가 확 높아졌다.
+  + 외로운 문자와 같은 경우 스택을 이용하여 풀 수 있었다.
++ 수의 새로운 연산
+  + 이 문제는 꽤 많이 어려웠다. 규칙을 찾기가 힘들어서 답을 찾아내기가 어려운 이런 문제가 생각보다 발목을 잡는 것 같다.
+
+```python
+# 첫 번째 대각선 (1, 1) = 1
+# 두 번째 대각선 (1, 2), (2, 1) = 2, 3
+# 세 번째 대각선 (1, 3), (2, 2), (3, 1) = 4, 5, 6
+# ...
+# n번째 대각선까지 대하여 for i in range(1, n+1)에서 (i, n+1-i)가 1씩 누적증가하는 규칙이다.
+for t in range(1, int(input())+1):
+    p, q = map(int, input().split())
+    # p / q를 찾았는지의 플래그
+    flag_p, flag_q = 0, 0
+    # level번째 대각선
+    level = 1
+    num = 0
+    while not flag_p or not flag_q:
+        for i in range(1, level+1):
+            num += 1
+            if not flag_p and num == p:
+                flag_p = 1
+                p_x, p_y = i, level+1-i
+            if not flag_q and num == q:
+                flag_q = 1
+                q_x, q_y = i, level+1-i
+
+        level += 1
+
+    o_x, o_y = p_x + q_x, p_y + q_y
+    flag_o = 0
+    o_level = 1
+    result = 0
+    while not flag_o:
+        for i in range(1, o_level+1):
+            result += 1
+            if i == o_x and o_level+1-i == o_y:
+                flag_o = 1
+                break
+        o_level += 1
+
+    print('#%d %d' % (t, result))
+
+
+# 2
+# 승현님 코드
+def find_xy(num):
+    # _sum은 (_add, 1)의 값, _add는 몇 번째 대각선인지(내 코드의 level)
+    _sum, _add = 0, 0
+    while _sum < num:
+        _add += 1
+        _sum += _add
+    dif = _sum - num # (_add, 1) 기준 dif만큼의 거리가 목표 x, y위치다.
+
+    return (_add - dif, 1 + dif)
+
+
+for t in range(1, int(input())+1):
+    a, b = map(int, input().split())
+    a_loc, b_loc = find_xy(a), find_xy(b)
+    c_loc = (a_loc[0]+b_loc[0], a_loc[1] + b_loc[1])
+    dif = c_loc[1] - 1
+    cross = (c_loc[0] + dif)*(c_loc[0] + dif + 1)//2
+    print("#%d %d" %(t, cross-dif))
+```
+
++ 느낀점 및 배운점
+
+  + 지난 번 SWEA 문제 풀이 때 느낀점으로 '하지만 이러한 것들이 기존의 난이도가 높았던 알고리즘 문제에 접합되어 섞여 나온다면 굉장히 고난이도의 문제로 변할 수 있을 것 같기 때문에, 지금 난이도가 낮다 하더라고 쉽게 넘기지 않고 수학적인 풀이들을 익혀야겠다는 생각이 들었다.'라고 적었었다.
+  + 여실히 걱정거리가 이루어진 회차였다. 수학적 풀이를 요하는 문제에 알고리즘을 사용해서 그 풀이를 해야하는 문제들이 나오자 새로운 유형에 꽤나 당황을 했다.
+
+  + 당황을 했다는 것만큼, 매우 중요한 경험이었다.
