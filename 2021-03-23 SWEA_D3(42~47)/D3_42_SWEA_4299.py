@@ -38,6 +38,8 @@ for t in range(1, int(input())+1):
 
     print('#%d %d' % (t, result))
 
+# opt_M과 opt_H없이 그냥 현재 시간 - 11과 현재 분 - 11로 계산해도 알아서 마이너스가 되면서 계산이 된다. 그냥 해도 된다.
+
 
 # 2
 T = int(input())
