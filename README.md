@@ -1433,3 +1433,70 @@ print(*prime_list)
 
   + 날짜 및 시간 계산의 경우에는 그냥 **문제에서 주어지는 기준점을 0으로 만드는 것을 택하자.**
     + 예) 11월 11일 11시 11분에서 일, 시, 분을 계산해야하는 경우, 11월 11일 0시 0분으로 맞춰서 나중에 뺀 시간만큼 조정을 하자
+
+
+
+## 2021-03-25
+
++ Difficulty 3의 정답율순 46번, 49번, 50번 문제를 풀었다. SSAFY과정 중 완료한 문제들은 제외했다.
++ **신뢰, 두 수의 덧셈, 전봇대**
++ 머릿 속에서 답을 구하기 위해 어떤 방식을 찾아내야 할지를 계속 생각해야 하는 문제들이었다.
+  + 알고리즘 기법이 사용되지는 않았으나, 정말 심플하게 사고력을 체크하는 느낌이었다.
+  + 문제가 좋다고 느껴졌다.
++ 신뢰
+
+```python
+for t in range(1, int(input())+1):
+    data = list(input().split())
+    pos_B, pos_O = 1, 1
+    # 이번 시행에서 각 로봇이 사용한 시간
+    time_B, time_O = 0, 0
+    # 각 로봇이 상대 로봇이 움직이는 동안 같이 움직이며 세이브 한 시간
+    save_B, save_O = 0, 0
+    result = 0
+    for i in range(1, len(data), 2):
+        robot = data[i]
+        button = int(data[i+1])
+        # 완전 중복인데 함수화하면 짧아질 듯?
+        if robot == 'B':
+            # 버튼에 도달하기까지 필요한 시간 = 버튼까지의 거리 - 반대쪽 로봇이 움직인 동안 같이 움직여 세이브한 시간
+            need_time = abs(button - pos_B) - save_B
+            # 버튼을 도달하기까지 필요한 시간보다 세이브한 시간이 많으면 누르는 시간 1초만 계산
+            time_B = need_time + 1 if need_time > 0 else 1
+            result += time_B
+            # 사용한 시간만큼 반대쪽 로봇의 시간이 세이브된다.
+            save_O += time_B
+            # 시행이 끝났으므로 '사용한 시간'은 0으로 초기화, 위치는 버튼으로
+            time_O, pos_B = 0, button
+            # 반대쪽 로봇이 쌓아준 세이브 타임을 썼으므로 0으로 초기화
+            save_B = 0
+        else:
+            need_time = abs(button - pos_O) - save_O
+            time_O = need_time + 1 if need_time > 0 else 1
+            result += time_O
+            save_B += time_O
+            time_B, pos_O = 0, button
+            save_O = 0
+
+    print('#%d %d' % (t, result))
+```
+
+```python
+# 가독성 없이 짧게 짠 코드
+# 리스트의 인덱스 접근의 반복으로 시간은 아주 조금 더 걸린다.
+for t in range(1, int(input())+1):
+    data, B, O, result = list(input().split()), [1, 0, 0], [1, 0, 0], 0
+    for i in range(1, len(data), 2):
+        robot, oppose = (B, O) if data[i] == 'B' else (O, B)
+        button = int(data[i+1])
+        need_time = abs(button - robot[0]) - robot[2]
+        robot[1] = need_time + 1 if need_time > 0 else 1
+        result, oppose[2], robot[0], robot[2] = result + robot[1], oppose[2] + robot[1], button, 0
+
+    print('#%d %d' % (t, result))
+```
+
++ 느낀점 및 배운점
+  + 사실 신뢰 문제는 알고리즘을 배우기 시작한 초기에 풀었던 문제였다. 그때는 자그마치 코드의 길이가 3000자였고, 2시간을 넘게 풀었던 것으로 기억한다.
+  + 확실히 이제는 문제를 보면 어떻게 풀어나가야 할지, 무슨 변수가 필요한지가 머리 속에 조금씩 그려지는 것 같다. 이번 신뢰를 봤을 때는 예전에 한 번 풀어봐서인 것도 있겠지만, 바로 무엇이 필요한지 캐치할 수 있었다. 약간 머리 속에서 그려지는 문제의 모습을 **추상화**하는 것에 익숙해진 것 같다.
+  + 전깃줄 문제도 신박한 문제였다. 알고리즘은 전혀 필요하지 않고 사고력을 요하는 문제였다. 깔끔한 문제라고 생각한다.
