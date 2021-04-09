@@ -15,8 +15,9 @@
 
 
 from collections import deque
+import time
 
-
+start = time.time()
 drc = [[0, 1], [1, 0], [0, -1], [-1, 0]]
 N, M = map(int, input().split())
 arr = [list(map(int, input())) for _ in range(N)]
@@ -34,4 +35,23 @@ while queue:
         if 0 <= nr < N and 0 <= nc < M and not visited[nr][nc] and arr[nr][nc]:
             queue.append((nr, nc))
             visited[nr][nc] = visited[r][c] + 1
+print('first time: ', time.time() - start)
 
+
+start = time.time()
+drc = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+N, M = map(int, input().split())
+arr = [list(map(int, input())) for _ in range(N)]
+visited = [[0]*M for _ in range(N)]
+queue = [(0, 0, 1)]
+while queue:
+    r, c, cnt = queue.pop(0)
+    if r == N - 1 and c == M - 1:
+        print(cnt)
+        break
+    visited[r][c] = 1
+    for dr, dc in drc:
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < N and 0 <= nc < M and not visited[nr][nc] and arr[nr][nc]:
+            queue.append((nr, nc, cnt+1))
+print('first time: ', time.time() - start)
