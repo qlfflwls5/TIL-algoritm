@@ -63,7 +63,6 @@
 
 def checkCode(crypto):
     numcode = []
-    # 7개씩 잘라서 가져온 뒤 딕셔너리를 통해 해당하는 숫자를 numcode에 append시킨다.
     for i in range(8):
         numcode.append(code[crypto[i*7:(i+1)*7]])
 
@@ -91,9 +90,8 @@ for t in range(1, T+1):
         # 암호문일 경우와 아직 암호문이 안나왔을 때만 crypto에 암호문을 넣기. 암호문 한 줄만 있으면 된다.
         if len(temp) > 0 and not crypto:
             crypto = temp
-    # strip('0')으로 앞의 0이 날라간 경우 총 길이가 56이 될 떄까지 앞에 0을 채워주면 된다.
-    while len(crypto) < 56:
-        crypto = '0' + crypto
+    # 총 길이가 56이 될 떄까지 앞에 0을 채워준다.
+    crypto = crypto.zfill(56)
 
     print('#%d %d' % (t, checkCode(crypto)))
 
