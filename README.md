@@ -2135,3 +2135,149 @@ for t in range(1, int(input())+1):
 
   + 오늘 문제들은 많이 어려웠다.
   + 전부 다시 문제를 처음부터 풀어보았고 많은 것을 깨달았다. 이 깨달음이 잊혀지지 않았으면 좋겠다.
+
+
+
+## 2021-04-19
+
++ 싸피 Day26의 알고리즘 문제들을 복습하였다.
+
+  + 여기까지 쓰고 보니 사실 아카이빙 느낌으로 쭉 길게 이어 쓰고 싶어서 README를 이렇게 작성했지만 정리를 언젠가 해야될 것 같다. 이렇게 길어질 줄 몰랐다.
+  + Django 프로젝트를 하고 싶은데 알고리즘이 너무 힘들어서 요즘 시간이 안난다.. 다음 주부터 웹 트랙으로 다시 돌아가면 정말 열심히 만들어보자..! 우선 알고리즘 리뷰!
+
++ **퀵 정렬, 병합 정렬, 트리 순회, powerset 만들기**
+
++ **분할 정복, 백트래킹, 트리, 조합**의 기법을 사용했다.
+
++ 퀵 정렬은 여러가지 방법으로 할 수 있지만, 우리 수업에서는 가장 간단하게 생각해낼 수 있는 것으로 정리했다. `pivot`을 배열의 가장 끝 요소로 지정한다.
+
+  + ```python
+    # l: 각 arr(정렬 범위)의 시작 인덱스
+    # r: 각 arr(정렬 범위)의 끝 인덱스
+    # p: pivot값, 중앙에 위치하게 될 값(두 그룹을 나눌 기준 값) -> 우리는 r번째 값으로 잡는다.
+    # i: j가 p보다 작은 값을 찾으면 그 값과 스왑할 위치의 인덱스, 스왑하면 1증가
+    # j: p보다 작은 값을 찾으러 이동할 인덱스
+    # j가 끝까지 이동한 뒤에는 i번째 값과 r번째 값(p)를 스왑
+    
+    def quicksort(arr, l, r):
+        if l < r:
+            s = partition(arr, l, r)
+            quicksort(arr, l, s-1)
+            quicksort(arr, s+1, r)
+    
+    
+    def partition(arr, l, r):
+        p = arr[r]
+        i = l
+        for j in range(l, r):
+            if arr[j] <= p:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+    
+        arr[i], arr[r] = arr[r], arr[i]
+        return i
+    
+    
+    for t in range(1, int(input())+1):
+        N = int(input())
+        A = list(map(int, input().split()))
+        quicksort(A, 0, N-1)
+        print('#%d %d' % (t, A[N//2]))
+    ```
+
++ 병합 정렬은(왜 합병 정렬이라고도 부르는지 모르겠다) 개인적으로 가장 신기하고도 효율적인 알고리즘이라고 생각한다.
+
+  + 물론, 병합 정렬은 병합의 과정에서 새로운 배열을 계속 생성해야 하기 때문에 메모리의 소비가 크다.
+
+  + ```python
+    def mergesort(arr):
+        if len(arr) < 2:
+            return arr
+    
+        mid = len(arr)//2
+        a_arr = mergesort(arr[:mid])
+        b_arr = mergesort(arr[mid:])
+        ai, bi = 0, 0
+        temp = []
+        # 이 부분이 가장 감탄스럽다.
+        while ai < len(a_arr) and bi < len(b_arr):
+            if a_arr[ai] <= b_arr[bi]:
+                temp.append(a_arr[ai])
+                ai += 1
+            else:
+                temp.append(b_arr[bi])
+                bi += 1
+    
+        if ai == len(a_arr):
+            temp.extend(b_arr[bi:])
+        else:
+            temp.extend(a_arr[ai:])
+    
+        return temp
+    ```
+
++ 트리 순회는 개인적으로 가장 쉬운 문제였다. 나는 트리가 좀 잘 맞는 것 같다. 물론 힙은 어렵다.
+
+  + ```python
+    # 전위 순회, 중위 순회, 후위 순회를 모두 비교하며 구현하기 위해 order라는 함수 안에 전부 넣었다.
+    
+    def order(node):
+        if node:
+            # 전위 순회에서 부모 노드를 처리하는 곳
+            pre_way.append(str(node))
+            order(tree[node][0])
+            # 중위 순회에서 부모 노드를 처리하는 곳
+            in_way.append(str(node))
+            order(tree[node][1])
+            # 후위 순회에서 부모 노드를 처리하는 곳
+            post_way.append(str(node))
+    
+    
+    for t in range(1, int(input())+1):
+        N = int(input())
+        tree = [[0, 0] for _ in range(N+1)]
+        edges = list(map(int, input().split()))
+        # 주어진 입력은 부모노드와 자식노드의 쌍의 반복이며 2 1 1 4 4 3 과 같이 주어졌다.
+        # 이를 트리로 집어넣는 방법은 아주 다양하다.
+        for p, c in zip(edges[::2], edges[1::2]):
+            if not tree[p][0]:
+                tree[p][0] = c
+            else:
+                tree[p][1] = c
+    
+        pre_way, in_way, post_way = [], [], []
+        order(edges[0])
+    ```
+
++ powerset 만들기는 조합의 개념을 사용해서 쉽게 풀 수 있었다.
+
+  + ```python
+    # 입력받은 N개의 데이터에 대한 powerset 중 원소의 합이 M인 부분집합의 개수 구하기
+    
+    def powerset(start, S):
+        if S > M:
+            return
+    
+        if S == M:
+            cnt[0] += 1
+            return
+    
+        for i in range(start, N):
+            powerset(i+1, S+data[i])
+    
+    
+    for t in range(1, int(input())+1):
+        N, M = map(int, input().split())
+        data = list(map(int, input().split()))
+        cnt = [0]
+        powerset(0, 0)
+        print('#%d %d' % (t, cnt[0]))
+    ```
+
++ 느낀점 및 배운점
+
+  + 오늘 문제들은 특별히 코드까지 모두 기록하였다.
+    + 이 문제들은 어떠한 특별 케이스의 문제들이 아닌, 다른 문제들의 풀이에 기본적으로 쓰이게 될 뼈대 코드들이기 때문이다. 따라서, **매우 중요한 코드들이다.**
+    + 특히 트리나 조합의 경우는 확실히 익숙해질 필요가 있다. 지금은 꽤 많이 익숙해진 것 같다.
+    + 트리는 class를 사용하여 링크드 리스트를 구현할 수 있는데, 아직까지는 Python이 가지는 이점으로서 리스트를 사용해 구현했다. 다음 기회에는 링크드 리스트로 구현을 한 번 해봐야겠다.
+  + 오늘 문제들은 기본기를 확인하는 문제들인 것 같았다. 술술 잘 풀렸고 매우 만족한다!
