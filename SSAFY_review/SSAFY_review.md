@@ -1148,3 +1148,207 @@ draw_tree(0, 0, e[0])
     + 특히 트리나 조합의 경우는 확실히 익숙해질 필요가 있다. 지금은 꽤 많이 익숙해진 것 같다.
     + 트리는 class를 사용하여 링크드 리스트를 구현할 수 있는데, 아직까지는 Python이 가지는 이점으로서 리스트를 사용해 구현했다. 다음 기회에는 링크드 리스트로 구현을 한 번 해봐야겠다.
   + 오늘 문제들은 기본기를 확인하는 문제들인 것 같았다. 술술 잘 풀렸고 매우 만족한다!
+
+<br/>
+
+## 2021-04-20 (2)
+
++ 싸피 Day27의 알고리즘 문제들을 복습하였다.
+
++ **이진 탐색, 이진 탐색_확장 문제, N-Queen, 최소 생산 비용, 전기버스2, 동철이의 일 분배**
+
++ **이진 탐색, 백트래킹, DP**의 기법을 사용했다.
+
++ 이진 탐색은 오랜만에 해보니 또 새로웠다. 기본적인 이진 탐색에서 확장된 문제들을 풀어보았다.
+
+  + ```python
+    # 1. A, B 배열에서 B의 각 요소를 A에서 이진탐색을 이용해 찾을 때 비교횟수 누적값 출력, 못찾았다면 0으로
+    # 2. A, B 배열에서 B의 각 요소를 A에서 이진탐색으로 K번 비교 내에 찾을 수 있는지 검사하여, 찾을 수 있는 것의 개수 출력
+    # 3. A, B 배열에서 못 찾았을 경우 작은 것 중 가장 큰 것 검색
+    # 4. A, B 배열에서 못 찾았을 경우 큰 것 중 가장 작은 것 검색
+    # 5. A, B 배열에서 A에 중복 데이터가 있다고 할 때 가장 앞의 것을 찾기
+    
+    
+    # 1, 2, 3, 4번 동시 해결
+    def binary_search(b):
+        s, e = 0, len_A - 1
+        accumulate = 0
+        while s <= e:
+            mid = (s+e)//2
+            accumulate += 1
+            if A[mid] == b:
+                if K >= accumulate:
+                    K_cnt[0] += 1
+                print('%d의 비교 횟수: ' % b, accumulate)
+                return accumulate
+            elif A[mid] > b:
+                e = mid - 1
+            else:
+                s = mid + 1
+    
+        if e >= 0:
+            list3.append((b, A[e]))
+        if s < len_A:
+            list4.append((b, A[s]))
+        return 0
+    
+    
+    for t in range(1, int(input())+1):
+        len_A, len_B = map(int, input().split())
+        K = int(input())
+        A = list(map(int, input().split()))
+        B = list(map(int, input().split()))
+        K_cnt = [0]
+        accumulate_sum = 0
+        # 3번의 답들, 4번의 답들을 담을 리스트
+        list3, list4 = [], []
+        for b in B:
+            accumulate_sum += binary_search(b)
+    
+        print('3번: ', list3)
+        print('4번: ',list4)
+        print('총 누적 비교 횟수: ', accumulate_sum)
+        print('K번 횟수 내 비교 완료: ', K_cnt[0])
+        
+    
+    [입력]
+    3
+    5 5
+    2
+    1 3 5 7 9
+    1 2 3 6 7
+    [출력]
+    1의 비교 횟수:  2
+    3의 비교 횟수:  3
+    7의 비교 횟수:  2
+    3번:  [(2, 1), (6, 5)]
+    4번:  [(2, 3), (6, 7)]
+    총 누적 비교 횟수:  7
+    K번 횟수 내 비교 완료:  2
+        
+    
+    # 5번
+    def binary_search(b):
+        s, e = 0, len_A - 1
+        while s <= e:
+            mid = (s+e)//2
+            # 끝의 것을 갖고 오고 싶다면 등호를 빼고 e를 리턴하면 됨
+            if A[mid] >= b:
+                e = mid - 1
+            else:
+                s = mid + 1
+    
+        return s if 0 <= s < len_A else -1
+    
+    
+    for t in range(1, int(input())+1):
+        len_A, len_B = map(int, input().split())
+        A = list(map(int, input().split()))
+        B = list(map(int, input().split()))
+    
+        for b in B:
+            print('%d의 첫 인덱스: ' % b, binary_search(b))
+    ```
+
++ **N-Queen** 유명한 문제라고 한다.
+
+  + 행을 기준으로 열의 선택은 기존의 순열을 풀던 방법처럼 하면 쉽게 처리할 수 있으나 **대각선이 관건이었다.**
+  + 처음에 나는 두 퀸의 행과 열의 차이가 같으면 대각선에 있다고 판단하여 풀어냈지만, 대각선 자체의 식을 구해 푸는 방법도 있었다.
+
+  + ```python
+    # 대각선 자체에 잘보면 특성이 있다.
+    # n*n의 배열에서 대각선의 개수는 좌상, 우상 대각선 각각 2*n-1이다.
+    # 그리고, 행과 열의 인덱스를 이용해 각 대각선을 나타낼 수 있다.
+    # n이 4일 때,
+    # 우상 대각선(행 + 열)
+    # 0 1 2 3
+    #       4
+    #       5
+    #       6
+    # 좌상 대각선(행 - 열 + n - 1)
+    # 3 2 1 0
+    # 4
+    # 5
+    # 6
+    
+    # level은 행 번호, i는 열 번호가 된다.
+    def DFS(level):
+        if level >= N:
+            cnt[0] += 1
+            return
+    
+        for i in range(N):
+            if not col[i] and not diag_r[level+i] and not diag_l[level-i+N-1]:
+                col[i], diag_r[level+i], diag_l[level-i+N-1] = 1, 1, 1
+                DFS(level+1)
+                col[i], diag_r[level+i], diag_l[level-i+N-1] = 0, 0, 0
+    
+    
+    for t in range(1, int(input())+1):
+        N = int(input())
+        # 열, 우상 대각선, 좌상 대각선 방문 체크용
+        col, diag_r, diag_l = [0]*N, [0]*(2*N-1), [0]*(2*N-1)
+        cnt = [0]
+        DFS(0)
+        print('#%d %d' % (t, cnt[0]))
+    ```
+
++ **전기 버스2**는 처음 내가 제대로 DP를 이해하고 도전해보려 한 문제다.
+
+  + ```python
+    # 충전지를 교환하는 방식의 전기버스를 운행하려고 한다. 
+    # 정류장에는 교체용 충전지가 있는 교환기가 있고, 충전지마다 최대로 운행할 수 있는 정류장 수가 정해져 있다.
+    # 정류장과 충전지에 대한 정보가 주어질 때, 목적지에 도착하는데 필요한 최소한의 교환횟수를 출력하는 프로그램을 만드시오. 단, 출발지에서의 배터리 장착은 교환횟수에서 제외한다.
+    
+    # [입력]
+    # 첫 줄에 테스트케이스의 수 T가 주어진다. 1<=T<=50
+    # 다음 줄부터 테스트 케이스의 별로 한 줄에 정류장 수 N, N-1개의 정류장 별 배터리 용량 Mi가 주어진다. 3<=N<=100, 0 ＜ Mi ＜ N
+    
+    
+    # 1
+    # 백트래킹
+    def DFS(cur, cnt):
+        # 가지치기1: 이미 최소 교체 횟수를 넘은 경우
+        if cnt >= min_change[0]:
+            return
+    
+        end = cur + station[cur]
+        if end >= N-1:
+            min_change[0] = cnt
+            return
+    
+        for i in range(cur+1, end+1):
+            # 가지치기2: i에서 갈 수 있는 가장 먼 정류장이 현재 cur에서 갈 수 있는 경우 가지치기
+            if i < N-1 and i + station[i] > end:
+                DFS(i, cnt+1)
+    
+    
+    for t in range(1, int(input())+1):
+        data = list(map(int, input().split()))
+        N, station = data[0], data[1:]
+        min_change = [N]
+        DFS(0, 0)
+        print('#%d %d' % (t, min_change[0]))
+        
+        
+    # 2
+    # DP
+    for t in range(1, int(input()) + 1):
+        N, *station = map(int, input().split())
+        dp = [[] for _ in range(N)]
+        for i in range(N-1):
+            for j in range(i+1, i+station[i]+1):
+                if not dp[i]:
+                    dp[j].append(1)
+                elif j < N:
+                    dp[j].append(min(dp[i])+1)
+    
+        print('#%d %d' % (t, min(dp[N-1])-1))
+    ```
+
++ 느낀점 및 배운점
+
+  + 오늘도 주요 문제들은 내가 작성한 코드를 그대로 적어보았다.
+    + 나중에 이 코드를 다시 보면서 상기할 날이 올 것 같다.
+  + DP의 세계는 정말 신기하다. 문제를 풀 때 문제를 정확하게 파악하는 능력이 요구될 것 같다.
+  + 아쉽게도 알고리즘 학습은 곧 끝나고 DP도 거의 다루지 않지만, 다른 사이트에서 DP 문제들을 풀어볼 필요가 있을 것 같다.
