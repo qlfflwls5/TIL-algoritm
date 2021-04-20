@@ -123,8 +123,8 @@ for t in range(1, int(input()) + 1):
     for i in range(N-1):
         for j in range(i+1, i+station[i]+1):
             if not dp[i]:
-                dp[j].append(1)
+                dp[j].append(0)
             elif j < N:
                 dp[j].append(min(dp[i])+1)
 
-    print('#%d %d' % (t, min(dp[N-1])-1))
+    print('#%d %d' % (t, min(dp[N-1])))
