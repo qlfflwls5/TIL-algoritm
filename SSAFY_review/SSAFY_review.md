@@ -1352,3 +1352,94 @@ draw_tree(0, 0, e[0])
     + 나중에 이 코드를 다시 보면서 상기할 날이 올 것 같다.
   + DP의 세계는 정말 신기하다. 문제를 풀 때 문제를 정확하게 파악하는 능력이 요구될 것 같다.
   + 아쉽게도 알고리즘 학습은 곧 끝나고 DP도 거의 다루지 않지만, 다른 사이트에서 DP 문제들을 풀어볼 필요가 있을 것 같다.
+
+<br/>
+
+## 2021-04-22
+
++ 싸피 Day28의 알고리즘 문제들을 복습하였다.
+
++ **DFS, BFS, Dijkstra, 최장 경로**
+
++ **DFS, BFS, Dijkstra**의 기법을 사용했다.
+
++ 가중치 있는 유향 그래프에서 시작 정점과 각 정점 사이의 가중치 비용이나 경로를 구하는 기법인 **Dijkstra**를 새롭게 배웠다. 매우 중요한 개념같으니 알고리즘 자체를 이해하고 외워놓자.
+
+  + ```python
+    # 정점은 'a'부터 시작하여 'b', 'c'와 같이 나열되며 25개를 넘지 않는다. 방향성 그래프이며, 간선에 가중치 정보가 있다.
+    
+    
+    def dijkstra(s):
+        # U: 방문 처리용, D: 시작 정점으로부터 각 정점까지의 최단 거리
+        U = [0]*(V)
+        D = [0] + [float('inf')]*(V-1)
+    
+        # 먼저 시작 정점에 대한 1시행 처리
+        U[s] = 1
+        for w, c in AL[s]:
+            D[w] = c
+    
+        # 시작 정점 이외의 나머지 정점에 대한 처리
+        for _ in range(V-1):
+            # 방문하지 않은 정점 중에 D값이 가장 작은 정점에 대해, 방문 처리하고, 인접 정점들의 최단 거리를 필요하면 갱신
+            v = D.index(min([D[x] for x in range(V) if not U[x]]))
+            U[v] = 1
+            for w, c in AL[v]:
+                D[w] = min(D[w], D[v]+c)
+    
+        return D
+    
+    
+    for t in range(1, int(input())+1):
+        V, E = map(int, input().split())
+        AL = [[] for _ in range(V)]
+        for _ in range(E):
+            s, e, c = input().split()
+            AL[ord(s)-97].append((ord(e)-97, int(c)))
+    
+        result = dijkstra(0)
+        print('#%d %s' % (t, ' '.join(map(str, result))))
+    ```
+
++ **최장 경로** 문제도 매우 유의미한 문제이다. 우리는 여태까지 BFS를 통한 **최단 거리** 문제만 풀었지, 주어진 그래프 내에서의 **최장 거리**는 푼 적이 없었다.
+
+  + 최장 거리는 다음과 같이 구한다.
+
+    1. 모든 정점에서 깊이 우선 탐색을 실시해야 한다.
+    2. 문제는, **이번 경로에서 방문한 정점이 다음 경로에서 다시 방문할 수 있다는 것**이다.(돌아서 올 수도 있기 때문에)
+    3. 따라서, 이번 경로의 최대 깊이로 내려가고 나서 갈림길로 되돌아와 다른 경로로 틀 때는, 돌아온 길만큼은 방문 처리를 초기화해줘야 한다.
+    4. 이를 구현하기 위해 DFS를 재귀적으로 구성하고, 경로의 길이를 재기 위해 DFS 함수에 거리 누적합용 인자를 추가한다.
+
+  + ```python
+    def DFS_max(v, cnt):
+        max_v[0] = max(max_v[0], cnt)
+        visited[v] = 1
+        for w in AL[v]:
+            if not visited[w]:
+                DFS_max(w, cnt + 1)
+        # 방문 처리 초기화
+        visited[v] = 0
+    
+    
+    for t in range(1, int(input()) + 1):
+        N, M = map(int, input().split())
+        AL = [[] for _ in range(N + 1)]
+        for _ in range(M):
+            s, e = map(int, input().split())
+            AL[s].append(e)
+            AL[e].append(s)
+    
+        max_v = [0]
+        # 모든 정점에서 다 DFS를 돌려본다.
+        for i in range(1, N + 1):
+            visited = [0] * (N + 1)
+            DFS_max(i, 1)
+    
+        print('#%d %d' % (t, max_v[0]))
+    ```
+
++ 느낀점 및 배운점
+
+  + 싸피 알고리즘 수업의 마지막 단원인 그래프이다. Dijkstra를 중점적으로 배웠고 다른 Prim, KRUSKAL 알고리즘은 지나가는 식으로 배웠는데, 전부 매우 어려운 알고리즘인 것 같다.
+    + 계속 이해를 반복 시도하자.
+  + 최장 경로의 문제도 순간 굉장히 당황했던 문제다. DFS로 해결할 수 있음을 깨달았다.
