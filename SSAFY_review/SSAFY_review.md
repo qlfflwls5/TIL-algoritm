@@ -1372,10 +1372,11 @@ draw_tree(0, 0, e[0])
     def dijkstra(s):
         # U: 방문 처리용, D: 시작 정점으로부터 각 정점까지의 최단 거리
         U = [0]*(V)
-        D = [0] + [float('inf')]*(V-1)
+        D = [float('inf')]*V
     
         # 먼저 시작 정점에 대한 1시행 처리
         U[s] = 1
+        D[s] = 0
         for w, c in AL[s]:
             D[w] = c
     
