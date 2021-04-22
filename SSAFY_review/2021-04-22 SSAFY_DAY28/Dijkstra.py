@@ -21,8 +21,10 @@ def dijkstra(s):
     # 시작 정점 이외의 나머지 정점에 대한 처리
     for _ in range(V-1):
         # 방문하지 않은 정점 중에 D값이 가장 작은 정점에 대해, 방문 처리하고, 인접 정점들의 최단 거리를 필요하면 갱신
-        # min안에 대괄호가 필요없다. 리스트가 아니어도 iterator면 min가능
-        v = D.index(min(D[x] for x in range(V) if not U[x]))
+        # 수정 1: min을 위해서 리스트를 만들기 위한 대괄호 안써도 된다. iterator는 min그냥 가능
+        # 수정 2: 기존 코드는 v = D.index(min([D[x] for x in range(V) if not U[x]]))였다. 이렇게 하면 가중치가 같은 녀석들의 경우 단순히 D에서 index로 찾아오므로 문제가 발생
+        #         따라서, 방문하지 않은 index에 대해서만 고려할 수 있도록 해야 한다.
+        v = min((D[x], x) for x in range(V) if not U[x])[1]
         U[v] = 1
         for w, c in AL[v]:
             D[w] = min(D[w], D[v]+c)
