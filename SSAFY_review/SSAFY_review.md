@@ -1451,3 +1451,172 @@ draw_tree(0, 0, e[0])
     + Dijkstra 코드는 계속 수정을 한 부분이 있다.
     + 언제나 실수는 존재한다. 반례를 찾는 것도 능력이다. 잘 살펴보자.
     + 이제는 그래도 완벽한 것 같다...!
+
+<br/>
+
+## 2021-04-23
+
++ 싸피 Day29의 알고리즘 문제들을 복습하였다.
+
++ **Dijkstra, 그룹나누기, 연산, 최소 비용, 최소 신장 트리, 최소 이동 거리**
+
++ **Dijkstra, KRUSKAL, DFS, BFS**의 기법을 사용했다.
+
++ 저번의 **Dijkstra**의 알고리즘에 대해 조금 의문이 생겼다.
+
+  + 과연 **시작 정점에서의 처리**를 따로 해주어야 하는가?
+
+  + 방문하지 않은 정점 중 최단 거리가 가장 짧은 정점을 찾는 데에 꼭 **D를 전부 순회해야 하는가**?
+
+    + **이 물음에 대한 해답으로서의 알고리즘을 직접 짜보았다.**
+
+  + ```python
+    def dijkstra(s):
+        U = [0]*(V)
+        D = [float('inf')]*V
+        D[s] = 0
+        # 원래 여기서 시작 정점의 첫 시행을 미리 해줬는데, 불필요한 것 같다. U[s] = 1과 시작 정점의 인접 정점들에 대한 처리를 해주었었다.
+        # 대신 check라는 set을 이용해서 가장 작은 D값을 가질 수 있는 정점 후보군을 만든다.
+        # 가장 작은 D값을 가질 수 있는 정점은 인접 정점에 해당되었던 것들만 가능하다.
+        check = {s}
+        for _ in range(V):
+            v = min((D[x], x) for x in check if not U[x])[1]
+            U[v] = 1
+            # 만약 가장 작은 D값을 가진 정점으로 뽑혔다면, 이 정점의 최단 거리는 확정된 것
+            # 더 이상 check에 있어봤자 반복만 한 번 더 하게 만드니 제거한다.
+            check.remove(v)
+            for w, c in AL[v]:
+                D[w] = min(D[w], D[v]+c)
+                # 여기가 인접 정점에 해당되는 것들을 check에 넣어주는 작업
+                check.add(w)
+    
+        return D
+    
+    
+    for t in range(1, int(input())+1):
+        V, E = map(int, input().split())
+        AL = [[] for _ in range(V)]
+        for _ in range(E):
+            s, e, c = input().split()
+            AL[ord(s)-97].append((ord(e)-97, int(c)))
+    
+        result = dijkstra(0)
+        print('#%d %s' % (t, ' '.join(map(str, result))))
+    ```
+
++ **최소 비용**은 매우 어려웠던 문제로, **Dijkstra의 2차원 배열 적용** 문제다.
+
+  + 나는 Dijkstra로 풀었으나, 사실 Dijkstra는 BFS와 비슷한 개념이라 BFS로 푼 풀이도 가져왔다.
+
+    + **이 문제를 풀며 위의 Dijkstra 알고리즘에 대한 재고를 해보게 되었다.**
+
+  + 속도는 BFS가 더 빨랐고, 가독성도 좋은 것 같다.
+
+  + ```python
+    # 다익스트라의 2차원 배열용이다. 기본 다익스트라와 구조가 똑같고, 방문하지 않은 최소 D값을 지닌 정점을 찾기 위한 작업의 시간 단축을 위해
+    # check라는 set을 사용하는 것만 추가되었다. 이는 기본 다익스트라에서도 사용이 가능할 것이다.
+    # 또, 기본 다익스트라에서는 D[0]에 대한 시행을 먼저 해줬는데, 사실 안해줘도 된다.
+    def dijkstra(sr, sc):
+        U = [[0]*N for _ in range(N)]
+        D = [[float('inf')]*N for _ in range(N)]
+        D[sr][sc] = 0
+        # 이 부분이 핵심. 다익스트라에서는 방문하지 않은 정점들의 D값 중 가장 작은 D값을 가지는 정점을 다음에 시행의 대상으로 하는데,
+        # 코드의 흐름대로 생각해보면, 방문하지 않았으면서 D값이 inf가 아닌 후보군은 현재 D값이 업데이트 된 녀석들이다.
+        # 즉, 인접 정점들 중 D값이 갱신된 녀석들
+        check = {(0, 0)}
+        for _ in range(V):
+            # check내에서 방문하지 않고 D값이 최소인 정점 찾기
+            r, c = min((D[i][j], (i, j)) for i, j in check if not U[i][j])[1]
+    
+            # 시행의 대상이 된 정점은 최단 거리가 확정된 것이다. 방문 처리를 하고 check에서도 없애준다.(안없애면 시간 초과)
+            U[r][c] = 1
+            check.remove((r, c))
+    
+            for dr, dc in drc:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < N and 0 <= nc < N:
+                    w = 1 if arr[nr][nc] - arr[r][c] <= 0 else arr[nr][nc] - arr[r][c] + 1
+                    if D[nr][nc] > D[r][c] + w:
+                        D[nr][nc] = D[r][c] + w
+                        check.add((nr, nc))
+    
+        return D[N-1][N-1]
+    
+    
+    drc = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+    for t in range(1, int(input())+1):
+        N = int(input())
+        V = N**2
+        arr = [list(map(int, input().split())) for _ in range(N)]
+        print('#%d %d' % (t, dijkstra(0, 0)))
+    
+    
+    # 2
+    # BFS 풀이
+    # 2차원에서의 성능은 이게 더 좋다
+    # 유방향 가중치 그래프에서 BFS는 visited가 아닌 cost의 느낌으로 사용해서 푼다.(여기서는 cnt)
+    dr = [-1, 1, 0, 0]
+    dc = [0, 0, -1, 1]
+    
+    
+    def search():
+        q = [[0, 0]]
+        cnt = [[987654321] * N for _ in range(N)]
+        cnt[0][0] = 0
+        while q:
+            cr, cc = q.pop(0)
+            for i in range(4):
+                nr = cr + dr[i]
+                nc = cc + dc[i]
+                if 0 <= nr < N and 0 <= nc < N:
+                    height = (area[nr][nc] - area[cr][cc]) if area[nr][nc] > area[cr][cc] else 0
+                    if cnt[nr][nc] > cnt[cr][cc] + 1 + height:
+                        cnt[nr][nc] = cnt[cr][cc] + 1 + height
+                        q.append([nr, nc])
+        return cnt[-1][-1]
+    
+    
+    T = int(input())
+    for t in range(1, T + 1):
+        N = int(input())
+        area = [list(map(int, input().split())) for _ in range(N)]
+        result = search()
+        print('#%d %d' % (t, result))
+    ```
+
++ **최소 신장 트리**는 MST로 불리며, 가장 기본적인 문제를 풀었다. KRUSKAL의 기본 이론이므로 적어놔야겠다.
+
+  + ```python
+    def find_set(x):
+        while x != p[x]:
+            x = p[x]
+    
+        return x
+    
+    
+    def kruskal():
+        S = 0
+    
+        for s, e, w in edges:
+            rep_s, rep_e = find_set(s), find_set(e)
+            if rep_s != rep_e:
+                S += w
+                p[rep_e] = rep_s
+    
+        return S
+    
+    
+    for t in range(1, int(input())+1):
+        V, E = map(int, input().split())
+        edges = sorted([tuple(map(int, input().split())) for _ in range(E)], key=lambda x: x[2])
+        p = [i for i in range(V + 1)]
+    
+        print('#%d %d' % (t, kruskal()))
+    ```
+
++ 느낀점 및 배운점
+
+  + Dijkstra와 BFS 사이에서 많은 헷갈림이 생긴다. 반에서 최소 비용 문제를 Dijkstra로 푼 사람이 나밖에 없었다. 모두들 BFS로 풀었는데, 실행시간이 더 빠르다.
+    + 무엇을 선택해야 할까.
+  + 싸피 과정이 짧은만큼 대체로 기본만 간단히 배운 느낌이 있어 아쉽다.
+    + 진행하는 알고리즘 스터디에서 더 많은 것들을 풀고 익혀봐야 할 것 같다.
