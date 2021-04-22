@@ -1383,7 +1383,8 @@ draw_tree(0, 0, e[0])
         # 시작 정점 이외의 나머지 정점에 대한 처리
         for _ in range(V-1):
             # 방문하지 않은 정점 중에 D값이 가장 작은 정점에 대해, 방문 처리하고, 인접 정점들의 최단 거리를 필요하면 갱신
-            v = D.index(min([D[x] for x in range(V) if not U[x]]))
+            # min 안에 대괄호로 리스트 만들어줄 필요가 없다. iterator면 min가능
+            v = D.index(min(D[x] for x in range(V) if not U[x]))
             U[v] = 1
             for w, c in AL[v]:
                 D[w] = min(D[w], D[v]+c)
