@@ -1454,7 +1454,7 @@ draw_tree(0, 0, e[0])
 
 <br/>
 
-## 2021-04-23
+## 2021-04-22
 
 + 싸피 Day29의 알고리즘 문제들을 복습하였다.
 
@@ -1620,3 +1620,157 @@ draw_tree(0, 0, e[0])
     + 무엇을 선택해야 할까.
   + 싸피 과정이 짧은만큼 대체로 기본만 간단히 배운 느낌이 있어 아쉽다.
     + 진행하는 알고리즘 스터디에서 더 많은 것들을 풀고 익혀봐야 할 것 같다.
+
+<br/>
+
+## 2021-04-23
+
++ 싸피 Day29의 알고리즘 문제들을 복습하였다.
+
++ **병합정렬-슬라이싱, 보급로, 인수의 생일 파티, 창용 마을 무리의 개수, 하나로**
+
++ **병합정렬, KRUSKAL, PRIM, Dijkstra, 상호 배타 집합**의 기법을 사용했다.
+
++ 이번에 정말 많은 혼란을 겪었다.
+
+  + Dijkstra에 대해서 다시 혼자 재정의를 내리게 되었다.
+
+    + **원래 check라는 녀석을 썼으나, 이를 사용하지 않는게 훨씬 나은 것 같다.**
+      + check는 이중 배열에서만 사용하자.
+
+  + ```python
+    def dijkstra(s):
+        U = [0]*(V)
+        D = [INF]*V
+        D[s] = 0
+        # 원래 여기서 시작 정점의 첫 시행을 미리 해줬는데, 불필요한 것 같다. U[s] = 1과 시작 정점의 인접 정점들에 대한 처리를 해주었었다.
+        for _ in range(V):
+            # 최소 D값을 갖는 방문하지 않는 정점을 이렇게 찾자. 이게 낫다.
+            min_d = INF
+            for i, d in enumerate(D):
+                if not U[i] and d < min_d:
+                    min_d, v = d, i
+            U[v] = 1
+            for w, c in AL[v]:
+                    D[w] = min(D[w], D[v]+c)
+    
+        return D
+    
+    
+    INF = 1e10
+    for t in range(1, int(input())+1):
+        V, E = map(int, input().split())
+        AL = [[] for _ in range(V)]
+        for _ in range(E):
+            s, e, c = input().split()
+            AL[ord(s)-97].append((ord(e)-97, int(c)))
+    
+        result = dijkstra(0)
+        print('#%d %s' % (t, ' '.join(map(str, result))))
+    ```
+
++ **Dijkstra와 Prim의 차이**를 깨닫는 것이 매우 중요해보였다.
+
+  + 따라서, 이를 내가 느낀 바로 정리해보았다.
+
+  + 다익스트라와 프림의 차이점
+
+    + 다익스트라는 **유.무향 그래프** 둘 다 가능
+
+    + 프림은 **무향 그래프만 가능(MST)**
+
+      + **프림은 인접 정점의 거리 값을 갱신하는 과정에서 not visited처리를 해주어야 한다!**
+
+      + 다익스트라의 경우, 어차피 시작 정점부터 누적되어 쌓여오는 것이기 때문에 이후의 D의 값이 더 커서 왔던 길을 되돌아 갈 수가 없다. **하지만, 프림의 경우 누적되어 쌓여오는 값이 아니라 당장 정점에서의 인접 정점으로의 거리만 D에 담기 때문에 min(D)를 갖는 정점을 구하는 부분에서 이전 정점을 방문해 루프가 생길 수 있다.**
+
+  + ```python
+    # prim의 구현 예
+    # 다익스트라와 똑같다. U를 MST로, D를 key로 바꿨을 뿐
+    INF = 10**12
+    def prim(s):
+        MST = [0]*N
+        key = [INF]*N
+        key[s] = 0
+        # pi = [NULL]*N # 부모 찾기용(경로를 찾을 때)
+        for _ in range(N):
+            min_v = INF
+            for i, k in enumerate(key):
+                if not MST[i] and k < min_v:
+                    min_v, v = k, i
+    
+            MST[v] = 1
+            for w, cost in AL[v]:
+                # Dijkstra와 똑같지만 MST에서는 이게 꼭 필요하다. 방문하지 않은 정점에 대해서만 진행
+                if not MST[w]:
+                    key[w] = min(key[w], cost)
+    
+        return round_up(sum(key)*E)
+    ```
+
++ **KRUSKAL**의 수정본이다. 중요한 것을 하나 빼먹었었다.
+
+  + KRUSKAL에서는 간선의 개수만큼만 간선 추가 작업을 하면 된다.
+
+    + 즉, 정점의 개수가 N이라면 N-1번만
+    + 따라서 이를 cnt를 사용해서 구현해 break를 걸어줘야 한다. 아래와 같이
+
+  + ```python
+    def kruskal():
+        S = 0
+        # 즉, 간선이 N-1개가 들어왔을 때, cnt가 N-1일 때까지만 간선을 넣는다.
+        cnt = 0
+        for w, s, e in edges:
+            rep_s, rep_e = find_set(s), find_set(e)
+            if rep_s != rep_e:
+                p[rep_e] = rep_s
+                S += w
+                cnt += 1
+                if cnt == N-1:
+                    break
+    
+        return round_up(S*E)
+    ```
+
++ **Dijkstra와 BFS**
+
+  + 대체로 BFS식의 풀이가 더 빠른 것 같았다. 잘 알아두자
+
+  + ```python
+    # Dijksta를 BFS로 구현한 것의 예시
+    # 이 문제는 갔다가 돌아오는 최단 경로를 찾는 문제로, 주어진 유향 그래프를 반전시켜서 한 번 더 다익스트라를 돌려야 하는 문제였다.
+    INF = int(1e9)
+     
+    def dijkstra(start, graph):
+        D = [INF] * (n+1)
+        D[start] = 0
+        queue = [start]
+        rp = 0
+        while rp < len(queue):
+            node = queue[rp]
+            rp += 1
+            for n_node, w in graph[node]:
+                d = D[node] + w
+                if d < D[n_node]:
+                    D[n_node] = d
+                    queue.append(n_node)
+        return D[1:]
+     
+    for t in range(1, int(input())+1):
+        n, m, x = map(int, input().split())
+        graph1, graph2 = [[] for _ in range(n+1)], [[] for _ in range(n+1)]
+        for _ in range(m):
+            s, e, w = map(int, input().split())
+            graph1[s].append((e, w))
+            graph2[e].append((s, w))
+     
+        result = max(a+b for a, b in zip(dijkstra(x, graph1), dijkstra(x, graph2)))
+        print('#%s %s' % (t, result))
+    ```
+
++ 느낀점 및 배운점
+
+  + 오늘 사실 매우 멘탈 관리가 힘들었다. 내 방식대로 생각했던 Dijkstra보다 BFS로 사람들이 푸는 것이 훨씬 효율이 좋아 삽질을 했나 생각이 들었다.
+    + 그래도 이런 삽질을 하면서 성장하는 것이라고 했다...
+    + 확실히 더 깊게 Dijkstra의 구동 방식에 대해 생각해볼 수 있었던 것 같다.
+      + 그래도 여전히 어렵긴하다.
+  + 네이버 코딩테스트가 내일이라 시험을 마치고 다시 한 번 심도있게 봐야할 것 같다.
