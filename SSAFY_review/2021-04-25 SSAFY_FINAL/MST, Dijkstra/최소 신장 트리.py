@@ -25,11 +25,11 @@ def prim(s):
             if not MST[i] and d < min_v:
                 v, min_v = i, d
 
-    MST[v] = 1
-    for e, w in AL[v]:
-        if not MST[e]:
-            D[e] = min(D[e], w)
-    print(D)
+        MST[v] = 1
+        for e, w in AL[v]:
+            if not MST[e]:
+                D[e] = min(D[e], w)
+
     return sum(D)
 
 
