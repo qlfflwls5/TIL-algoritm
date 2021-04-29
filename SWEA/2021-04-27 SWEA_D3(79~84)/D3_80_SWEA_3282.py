@@ -17,32 +17,6 @@
 
 
 # 1
-# DP - 구글링을 해서 내용을 이해하고 풀이했다.
-# N-1번째 부터 시작하여 1씩 줄어드는 i번째를 기준으로
-def knapsack(v, i):
-    # 현재 부피가 K이거나, i가 -1이면(모든 물건에 대한 탐색 완료) 더 이상 넣을 것이 없다. 0반환
-    if v == K or i == -1:
-        return 0
-    # i번째 물건을 넣었을 때 부피를 초과하여 넣을 수 없다면 i-1번째까지의 최적 결과와 이번 결과가 같다.
-    if v + V[i] > K:
-        return knapsack(v, i-1)
-    # i번째 물건을 넣을 수 있다면 i번째 물건을 넣으면서 늘어난 부피와 늘어난 가치를 고려한 최적 결과와, 넣지 않았을 때(i-1번째의 최적 결과) 중 max값을 리턴
-    return max(C[i] + knapsack(v+V[i], i-1), knapsack(v, i-1))
-
-
-for t in range(1, int(input())+1):
-    N, K = map(int, input().split())
-    V = []
-    C = []
-    for _ in range(N):
-        v, c = map(int, input().split())
-        V.append(v)
-        C.append(c)
-
-    print('#%d %d' % (t, knapsack(0, N-1)))
-
-
-# 2
 # DP - 2차원 배열
 def knapsack(k, v, c, n):  # W: 가방의 부피 한도, wt: 각 물건의 부피, val: 각 물건의 가치, n: 물건의 수
     arr = [[0]*(k+1) for _ in range(n+1)]  # DP를 위한 2차원 리스트 초기화
@@ -67,3 +41,26 @@ for t in range(1, int(input())+1):
         C.append(c)
 
     print('#%d %d' % (t, knapsack(K, V, C, N)))
+
+
+# 2
+# 승현님 DP
+for t in range(1, int(input())+1):
+    N, K = map(int, input().split())
+    stuffs = [list(map(int, input().split())) for _ in range(N)]
+    values = [0]*(K+1)
+    for size, value in stuffs:
+        # 물건이 더 무거우면 그냥 스킵
+        if size > K:
+            continue
+        # 앞에서부터 변경을 하는데, 그 값이 뒤의 값에 영향을 미치므로 for문은 뒤에서부터 온다.
+        # 즉, 5번째를 통해 6번째를 변경한 후 그다음 4번째를 통해 5번째를 변경하고...
+        for i in range(K, size, -1):
+            # 이미 그 부피의 값이 있다면 컨티뉴(합한 부피에다가 값을 넣어야 하므로)
+            if not values[i-size]:
+                continue
+            # 얘는 이미 가방에 물건이 있을 때 현재 물건을 넣어서 합해지고 난 부피와 가치를 계산
+            values[i] = max(values[i], values[i - size] + value)
+        # 얘는 빈 가방에 넣을 때(물건 하나만의 부피와 가치를 계산)
+        values[size] = max(values[size], value)
+    print("#%d %d" %(t, max(values)))
