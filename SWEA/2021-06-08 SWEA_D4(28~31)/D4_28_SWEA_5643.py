@@ -35,44 +35,85 @@
 
 
 # 트리를 올라가거나 내려가기만 해서 모든 노드를 갈 수 있으면 내 위치를 알 수 있는 것
-def find_tallest(x):
-    if x != tall[x]:
-        x = tall[x]
+# 그러나 매번 노드마다 재검사할 필요가 없다. 메모이제이션을 사용한다.
+def find_shorter(node):
+    # 더 키가 작은 노드가 없다면, 즉 키가 작은 것에서의 리프 노드라면 메모이제이션에는 길이가 0인 집합을 담고 자신을 원소로 하는 집합 반환
+    if not shorter[node]:
+        short_mm[node] = set()
+        return {node}
+    
+    # 현재 노드의 메모이제이션 값이 될 집합
+    short_set = set()
+    # 나보다 키가 작다는 정보가 주어진 노드들에 대해서 작업
+    for v in shorter[node]:
+        # 노드 v의 메모이제이션 값이 있다면 그 값(집합)에 있는 모든 원소들을 내 집합에 add하고 v까지 add
+        if short_mm[v] != -1:
+            for w in short_mm[v]:
+                short_set.add(w)
+            short_set.add(v)
+        # 노드 v의 메모이제이션 값이 없다면 해당 노드에 대한 find_shorter 재귀 호출 반환값(집합)을 내 집합에 add하고 v까지 add
+        else:
+            for w in find_shorter(v):
+                short_set.add(w)
+            short_set.add(v)
+    
+    # 현재 노드의 메모이제이션 값에 완성된 short_set을 할당
+    short_mm[node] = short_set
+    
+    # 내 메모이제이션 값인 short_set을 반환(재귀호출 시 이를 반환하게 됨)
+    return short_set
 
-    return x
 
+def find_taller(node):
+    if not taller[node]:
+        tall_mm[node] = set()
+        return {node}
 
-def find_smallest(x):
-    if x != short[x]:
-        x = short[x]
+    tall_set = set()
+    for v in taller[node]:
+        if tall_mm[v] != -1:
+            for w in tall_mm[v]:
+                tall_set.add(w)
+            tall_set.add(v)
+        else:
+            for w in find_taller(v):
+                tall_set.add(w)
+            tall_set.add(v)
 
-    return x
+    tall_mm[node] = tall_set
+
+    return tall_set
 
 
 for t in range(1, int(input())+1):
     N = int(input())
     M = int(input())
-    tall = [i for i in range(N+1)]
-    short = [i for i in range(N+1)]
-    node_short_line = [set() for _ in range(N+1)]
-    node_tall_line = [set() for _ in range(N+1)]
+    taller = [[] for _ in range(N)]
+    shorter = [[] for _ in range(N)]
     for _ in range(M):
         a, b = map(int, input().split())
-        fs_a, fs_b = find_smallest(a), find_smallest(b)
-        ft_a, ft_b = find_tallest(a), find_tallest(b)
-        if fs_a != fs_b:
-            short[fs_b] = fs_a
-            node_short_line[b].add(fs_a)
-            node_short_line[a].add(fs_a)
-        if ft_a != ft_b:
-            tall[ft_a] = ft_b
-            node_tall_line[b].add(ft_b)
-            node_tall_line[a].add(ft_b)
+        # 주어지는 입력값과 인덱스를 맞추기 위해 -1처리
+        shorter[b-1].append(a-1)
+        taller[a-1].append(b-1)
+    
+    # 메모이제이션
+    tall_mm = [-1]*N
+    short_mm = [-1]*N
+    for i in range(N):
+        # 가장 키가 큰 노드에서만 find_shorter를 실행해도 재귀로 모든 노드에서 실행되므로 가장 효율적
+        if not taller[i]:
+            find_shorter(i)
+        # 가장 키가 작은 노드에서만 find_taller를 실행해도 재귀로 모든 노드에서 실행되므로 가장 효율적
+        if not shorter[i]:
+            find_taller(i)
 
-    print(short)
-    print(tall)
-    print(node_short_line)
-    print(node_tall_line)
+    result = 0
+    for i in range(N):
+        # 각 노드에 대해 키가 작은 노드들의 수와 키가 큰 노드들의 수의 합이 N-1(자신을 제외한 모든 노드의 수)라면 내 위치를 알 수 있다.
+        if len(short_mm[i]) + len(tall_mm[i]) == N-1:
+            result += 1
+
+    print('#%d %d' % (t, result))
 
 
 
