@@ -1205,3 +1205,145 @@ for t in range(1, int(input())+1):
     print('#%d %d' % (t, DP(0)))
 ```
 
+<br/>
+
+## 2021-06-08
+
++ 최종 프로젝트 및 방학이 끝나고 오랜만에 다시 시작된 알고리즘 스터디
++ Difficulty 4의 정답율순 28~31번 문제를 풀었다. SSAFY과정 중 완료한 문제들을 제외했다.
++ **[Professional] 키 순서, 수진이의 팰린드롬, 나는 개구리로소이다**
++ **메모이제이션, 트리, 팰린드롬, 문자열**의 알고리즘을 쓰는 문제였다.
++ **키 순서**는 매우 어려운 문제였다. 트리와 함께 메모이제이션을 활용해야지만 효율적으로 풀 수 있다.
+  + 스터디원들은 대부분 9초~10초의 실행 시간이 나왔지만 **나는 메모이제이션을 활용함으로써 3.9초의 실행 시간을 만들 수 있었다**.
+
+```python
+# N명의 학생들에 대해 두 명의 키 우열에 대한 M개의 정보가 주어져있다.
+# 이 정보만으로 자신의 키 위치를 정확히 알 수 있는 학생은 몇 명인가?
+
+# 트리를 올라가거나 내려가기만 해서 모든 노드를 갈 수 있으면 내 위치를 알 수 있는 것
+# 그러나 매번 노드마다 재검사할 필요가 없다. 메모이제이션을 사용한다.
+def find_shorter(node):
+    # 더 키가 작은 노드가 없다면, 즉 키가 작은 것에서의 리프 노드라면 메모이제이션에는 길이가 0인 집합을 담고 자신을 원소로 하는 집합 반환
+    if not shorter[node]:
+        short_mm[node] = set()
+        return {node}
+    
+    # 현재 노드의 메모이제이션 값이 될 집합
+    short_set = set()
+    # 나보다 키가 작다는 정보가 주어진 노드들에 대해서 작업
+    for v in shorter[node]:
+        # 노드 v의 메모이제이션 값이 있다면 그 값(집합)에 있는 모든 원소들을 내 집합에 add하고 v까지 add
+        if short_mm[v] != -1:
+            for w in short_mm[v]:
+                short_set.add(w)
+            short_set.add(v)
+        # 노드 v의 메모이제이션 값이 없다면 해당 노드에 대한 find_shorter 재귀 호출 반환값(집합)을 내 집합에 add하고 v까지 add
+        else:
+            for w in find_shorter(v):
+                short_set.add(w)
+            short_set.add(v)
+    
+    # 현재 노드의 메모이제이션 값에 완성된 short_set을 할당
+    short_mm[node] = short_set
+    
+    # 내 메모이제이션 값인 short_set을 반환(재귀호출 시 이를 반환하게 됨)
+    return short_set
+
+
+def find_taller(node):
+    if not taller[node]:
+        tall_mm[node] = set()
+        return {node}
+
+    tall_set = set()
+    for v in taller[node]:
+        if tall_mm[v] != -1:
+            for w in tall_mm[v]:
+                tall_set.add(w)
+            tall_set.add(v)
+        else:
+            for w in find_taller(v):
+                tall_set.add(w)
+            tall_set.add(v)
+
+    tall_mm[node] = tall_set
+
+    return tall_set
+
+
+for t in range(1, int(input())+1):
+    N = int(input())
+    M = int(input())
+    taller = [[] for _ in range(N)]
+    shorter = [[] for _ in range(N)]
+    for _ in range(M):
+        a, b = map(int, input().split())
+        # 주어지는 입력값과 인덱스를 맞추기 위해 -1처리
+        shorter[b-1].append(a-1)
+        taller[a-1].append(b-1)
+    
+    # 메모이제이션
+    tall_mm = [-1]*N
+    short_mm = [-1]*N
+    for i in range(N):
+        # 가장 키가 큰 노드에서만 find_shorter를 실행해도 재귀로 모든 노드에서 실행되므로 가장 효율적
+        if not taller[i]:
+            find_shorter(i)
+        # 가장 키가 작은 노드에서만 find_taller를 실행해도 재귀로 모든 노드에서 실행되므로 가장 효율적
+        if not shorter[i]:
+            find_taller(i)
+
+    result = 0
+    for i in range(N):
+        # 각 노드에 대해 키가 작은 노드들의 수와 키가 큰 노드들의 수의 합이 N-1(자신을 제외한 모든 노드의 수)라면 내 위치를 알 수 있다.
+        if len(short_mm[i]) + len(tall_mm[i]) == N-1:
+            result += 1
+
+    print('#%d %d' % (t, result))
+```
+
++ **나는 개구리로소이다**는 문제 자체의 이해가 많이 필요했다.
+  + 개구리의 울음소리가 맞는지를 판단해야 하고, 개구리가 겹쳐 울 때에 가능한 모든 경우를 따져 예외 처리를 해주어야 한다.
+  + 개구리는 **croak**의 순서로 울기 때문에 다른 스터디원들은 이를 리스트로 만들어 기존의 리스트 마지막에 들어있는 문자가 앞에 와야 하는 문자면 연결하는 식으로 했지만, 나는 단순히 숫자로만 구현이 가능하다 생각했다.
+    + 즉, r은 c의 개수를 넘지 못하고 o는 r의 개수를, a는 o의 개수를, k는 a의 개수를 넘지 못한다. 이를 활용하여 예외 처리만 몇 가지 해주면 **가독성이 높은 코드**를 짤 수 있다.
+
+```python
+# c, r, o, a, k의 순서대로 짝이 맞춰질 때 한 번의 울음소리가 된다.
+# 즉, r, o, a, k는 각각 앞의 문자보다 개수가 많게 나올 수 없다.
+for t in range(1, int(input())+1):
+    W = input()
+    result = 0
+    c, r, o, a, k = 0, 0, 0, 0, 0
+    pre_k = 0
+    for w in W:
+        if w == 'c':
+            c += 1
+            result += 1
+            # croakccrrooaakk와 같은 경우를 해결하기 위해서 pre_k가 필요
+            if pre_k:
+                result -= 1
+                pre_k -= 1
+        elif w == 'r' and c > r:
+            r += 1
+        elif w == 'o' and r > o:
+            o += 1
+        elif w == 'a' and o > a:
+            a += 1
+        elif w == 'k' and a > k:
+            k += 1
+            pre_k += 1
+        else:
+            result = -1
+            break
+
+    if not c == r == o == a == k:
+        result = -1
+
+    print('#%d %d' % (t, result))
+```
+
++ 느낀점 및 배운점
+
+  + 스터디에서 주어진 시간 내에 **키 순서**와 **나는 개구리로소이다**를 풀지 못했다. 문제를 푸는 데에 시간 제한이 있거나 누가 같이 보고 있을 때 문제 풀이 능력이 떨어지는 것 같다. 기술 면접을 위해서라도 이런 부분을 고쳐 나가자.
+    + 스터디 시간이 끝나자마자 두 문제 모두 쉽게 풀렸다...
+  + **키 순서**와 같은 문제의 경우 나는 트리, 메모이제이션의 두 가지 알고리즘을 활용했고 이 둘을 적절히 활용하자 실행 시간을 훨씬 단축할 수 있었다. 매우 어려웠지만 좋은 문제였다. 푼 보람도 느낀다.
