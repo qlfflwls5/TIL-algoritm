@@ -1886,3 +1886,86 @@ for t in range(1, int(input())+1):
   + 굉장히 머리를 많이 써야 하는 문제였다.
   + 단순한 DP가 아닌, DP 후보군을 다 구하고 그 속에서 최적해를 찾는 과정이 필요했다.
   + 사고력을 기르자.
+
+<br/>
+
+## 2021-06-11
+
++ 싸피에서 진행하는 알고리즘 문제 출제 대회에서 우수작들을 풀어보았다.
+  + **우리의 문제도 전체 150개의 문제 중 TOP 5로 뽑혔다!**
+    + 내가 만든 문제ㅎㅎ
++ **단식원, 금고털기**를 풀었다.
++ 단식원은 DFS를 통해 조합을 구한 후, BFS를 통해 그래프에 변화를 주어야 하는 문제다.
+  + 또한, 하나의 조합에서 BFS를 진행하고 나면 격자판을 원상태로 되돌려줘야 한다.
+  + 매우 어려운 문제였으나, 잘 풀어냈다.
+
+```python
+# 문제 단식원.py 참고
+
+def bfs(sr, sc):
+    queue = [(sr, sc)]
+    rear = 0
+    while rear < len(queue):
+        r, c = queue[rear]
+        rear += 1
+        arr[r][c] = 2
+        for dr, dc in drc:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < N and 0 <= nc < M and arr[nr][nc] == 0:
+                arr[nr][nc] = 2
+                queue.append((nr, nc))
+
+
+def dfs(level, idx):
+    global arr
+    if level == 3:
+        for r, c in chicken:
+            bfs(r, c)
+
+        cnt = 0
+        for i in range(N):
+            for j in range(M):
+                if arr[i][j] == 0:
+                    cnt += 1
+                    global max_v
+                    max_v = max(max_v, cnt)
+
+        for i in range(N):
+            for j in range(M):
+                if arr[i][j] == 2 and (i, j) not in chicken:
+                    arr[i][j] = 0
+
+        return
+
+    for i in range(idx, len(possible) - 3 + level + 1):
+        r, c = possible[i]
+        arr[r][c] = 1
+        dfs(level + 1, i + 1)
+        arr[r][c] = 0
+
+
+drc = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+for t in range(1, int(input())+1):
+    N, M = map(int, input().split())
+    arr = [list(map(int, input().split())) for _ in range(N)]
+    possible = []
+    chicken = set()
+    for i in range(N):
+        for j in range(M):
+            if not arr[i][j]:
+                possible.append((i, j))
+
+            if arr[i][j] == 2:
+                chicken.add((i, j))
+
+    max_v = 0
+    dfs(0, 0)
+
+    print('#%d %d' % (t, max_v))
+```
+
++ 금고털기는 아스키코드를 이용하여 푸는 문제로, 어렵지 않았다.
++ 느낀점 및 배운점
+  + 우리들이 낸 문제도 SWEA의 문제만큼 꽤 완성도가 높았다.
+  + 더욱이, 우리가 내려다 보니 여러 알고리즘을 합쳐서 풀게 한 문제도 있어서 굉장히 좋았다.
+  + 문제 출제는 쉬운 일이 아니다...
