@@ -44,3 +44,65 @@
 
 # 출력
 # 첫째 줄에 얻을 수 있는 안전 영역의 최대 크기를 출력한다.
+
+
+def bfs(sr, sc):
+    queue = [(sr, sc)]
+    rear = 0
+    while rear < len(queue):
+        r, c = queue[rear]
+        rear += 1
+        arr[r][c] = 2
+        for dr, dc in drc:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < N and 0 <= nc < M and arr[nr][nc] == 0:
+                arr[nr][nc] = 2
+                queue.append((nr, nc))
+
+
+def dfs(level, idx):
+    global arr
+    if level == 3:
+        for r, c in chicken:
+            bfs(r, c)
+
+        cnt = 0
+        for i in range(N):
+            for j in range(M):
+                if arr[i][j] == 0:
+                    cnt += 1
+                    global max_v
+                    max_v = max(max_v, cnt)
+
+        for i in range(N):
+            for j in range(M):
+                if arr[i][j] == 2 and (i, j) not in chicken:
+                    arr[i][j] = 0
+
+        return
+
+    for i in range(idx, len(possible) - 3 + level + 1):
+        r, c = possible[i]
+        arr[r][c] = 1
+        dfs(level + 1, i + 1)
+        arr[r][c] = 0
+
+
+drc = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+
+N, M = map(int, input().split())
+arr = [list(map(int, input().split())) for _ in range(N)]
+possible = []
+chicken = set()
+for i in range(N):
+    for j in range(M):
+        if not arr[i][j]:
+            possible.append((i, j))
+
+        if arr[i][j] == 2:
+            chicken.add((i, j))
+
+max_v = 0
+dfs(0, 0)
+
+print(max_v)
