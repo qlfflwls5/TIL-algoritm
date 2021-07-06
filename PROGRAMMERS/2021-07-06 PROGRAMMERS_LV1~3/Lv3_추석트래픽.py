@@ -62,7 +62,8 @@
 # 따라서 초당 최대 처리량은 7이 되며, 동일한 최대 처리량을 갖는 1초 구간은 여러 개 존재할 수 있으므로 이 문제에서는 구간이 아닌 개수만 출력한다.
 
 
-# 각 시작 시점부터 1초 동안 다른 시작 시점과 끝 시점이 몇 개 있는지 세면 된다.
+# 1. 첫풀이 86.4점
+# 각 시작 시점 및 끝 시점부터 1초 동안 다른 시작 시점과 끝 시점이 몇 개 있는지 세면 된다.
 def solution(lines):
     times = []
     for log in lines:
@@ -80,30 +81,53 @@ def solution(lines):
 
     answer = 0
     for i in range(len(times)):
-        v = 1
-        # 각 시작 시점에서 1초 뒤
-        h, m, s = times[i][0]
-        for j in range(len(times)):
-            if i != j:
-                for time in times[j]:
-                    nh, nm, ns = time
-                    if nh == h and nm == m and (s <= ns <= round(s + 0.999, 3) or round(s - 0.999, 3) <= ns <= s):
-                        v += 1
-                        break
-                    elif nh == h and nm == m + 1 and (s <= ns <= round(s + 0.999, 3) or round(s - 0.999, 3) <= ns <= s):
-                        v += 1
-                        break
-                    elif nh == h + 1 and nm == 0 and m == 59 and (s <= ns <= round(s + 0.999, 3) or round(s - 0.999, 3) <= ns <= s):
-                        v += 1
-                        break
-
-        answer = max(answer, v)
-        if v == 8:
-            print(h, m, s)
-
-    print(times)
+        # 각 시작 및 끝 시점에서 1초 뒤까지 몇 개의 시점이 존재하는지
+        for time in times[i]:
+            v = 1
+            h, m, s = time
+            for j in range(len(times)):
+                if i != j:
+                    for time in times[j]:
+                        nh, nm, ns = time
+                        if nh == h and nm == m and s <= ns <= round(s + 0.999, 3):
+                            v += 1
+                            break
+                        elif nh == h and nm == m + 1 and s <= ns + 60 <= round(s + 0.999, 3):
+                            v += 1
+                            break
+                        elif nh == h + 1 and nm == 0 and m == 59 and s <= ns + 60 <= round(s + 0.999, 3):
+                            v += 1
+                            break
+    
+            answer = max(answer, v)
 
     return answer
 
 
-print(solution(	["2016-09-15 20:59:57.421 0.351s", "2016-09-15 20:59:58.233 1.181s", "2016-09-15 20:59:58.299 0.8s", "2016-09-15 20:59:58.688 1.041s", "2016-09-15 20:59:59.591 1.412s", "2016-09-15 21:00:00.464 1.466s", "2016-09-15 21:00:00.741 1.581s", "2016-09-15 21:00:00.748 2.31s", "2016-09-15 21:00:00.966 0.381s", "2016-09-15 21:00:02.066 2.62s"]))
+# 2
+# 모든 시간을 초로 바꾼 다음 ms단위를 s단위로 만들기 위해 1000을 곱해주기
+# 각 시작 시점 및 끝 시점부터 1초 동안 다른 시작 시점과 끝 시점이 몇 개 있는지 세면 된다. -> 틀린 생각
+# 시작과 끝 시점만 세면 아주 긴 트래픽을 잡지 못한다. ex. 50 ~ 51까지의 트래픽 입장에서 1 ~ 100의 트래픽을 어떻게 잡아낼 것인가.
+# 결론은 51 >= 1이고 50 <= 100의 성질을 이용하면 된다. 즉, 비교되는 트래픽의 끝이 현재 트래픽의 시작보다 크고 비교되는 트래픽의 시작이 현재 트래픽의 끝보다 작으면 무조건 겹친다.
+def solution(lines):
+    times = []
+    for log in lines:
+        date, S, T = log.split(' ')
+        h, m, s = S.split(':')
+        T = T[:-1]
+        end = int((int(h) * 3600 + int(m) * 60 + float(s)) * 1000)
+        start = end - int(float(T) * 1000) + 1
+        times.append((start, end))
+
+    answer = 0
+    for i in range(len(times)):
+        for time1 in times[i]:
+            v = 1
+            for j in range(len(times)):
+                if i != j:
+                    if times[j][0] <= time1 + 999 and times[j][1] >= time1:
+                        v += 1
+
+            answer = max(answer, v)
+
+    return answer
