@@ -82,7 +82,8 @@ def solution(nodeinfo):
                 tree[(cur_node[0], cur_node[1])][1] = p_node[0]
                 break
             # 오른쪽 자식으로
-            elif p_p_node_x > cur_node[0] > p_node[0] and (i < len(parent_node_list) - 1 and cur_node[0] < parent_node_list[i + 1][0] or i == len(parent_node_list) - 1):
+            elif p_p_node_x > cur_node[0] > p_node[0] and \
+                    (i < len(parent_node_list) - 1 and cur_node[0] < tree[(parent_node_list[i + 1][0], parent_node_list[i + 1][1])][1] or i == len(parent_node_list) - 1):
                 tree[(p_node[0], p_node[1])][3] = [cur_node[0], cur_node[1]]
                 tree[(cur_node[0], cur_node[1])][1] = p_node[0]
                 break
@@ -92,7 +93,8 @@ def solution(nodeinfo):
                 tree[(cur_node[0], cur_node[1])][1] = p_node[0]
                 break
             # 오른쪽 자식으로
-            elif cur_node[0] > p_node[0] > p_p_node_x and (i < len(parent_node_list) - 1 and cur_node[0] < parent_node_list[i + 1][0] or i == len(parent_node_list) - 1):
+            elif cur_node[0] > p_node[0] > p_p_node_x and \
+                    (i < len(parent_node_list) - 1 and cur_node[0] < tree[(parent_node_list[i + 1][0], parent_node_list[i + 1][1])][1] or i == len(parent_node_list) - 1):
                 tree[(p_node[0], p_node[1])][3] = [cur_node[0], cur_node[1]]
                 tree[(cur_node[0], cur_node[1])][1] = p_node[0]
                 break
@@ -102,8 +104,7 @@ def solution(nodeinfo):
     preorder_list = []
     postorder_list = []
     order(nodeinfo[0][0], nodeinfo[0][1])
-    print(nodeinfo)
-    print(tree)
+
     return [preorder_list, postorder_list]
 
 print(solution([[5,3],[11,5],[13,3],[3,5],[6,1],[1,3],[8,6],[7,2],[2,2]]))
