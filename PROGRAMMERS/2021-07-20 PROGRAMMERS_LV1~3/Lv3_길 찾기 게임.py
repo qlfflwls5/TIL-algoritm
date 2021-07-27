@@ -45,66 +45,37 @@
 # 입출력 예
 # nodeinfo	result
 # [[5,3],[11,5],[13,3],[3,5],[6,1],[1,3],[8,6],[7,2],[2,2]]	[[7,4,6,9,1,8,5,2,3],[9,6,5,8,1,4,3,2,7]]
+import sys
+sys.setrecursionlimit(10**6)
+
 
 def solution(nodeinfo):
-    def order(x, y):
-        node = tree[(x, y)]
-        preorder_list.append(node[0])
-        if node[2]:
-            order(node[2][0], node[2][1])
+    def order(node):
+        preorder_list.append(node[2])
         if node[3]:
-            order(node[3][0], node[3][1])
-        postorder_list.append(node[0])
+            order(tree[node[3] - 1])
+        if node[4]:
+            order(tree[node[4] - 1])
+        postorder_list.append(node[2])
 
-    # 나 자신 번호, 부모 x좌표, 왼쪽 자식 xy좌표, 오른쪽 자식 xy좌표
-    tree = dict()
-    for i in range(len(nodeinfo)):
-        tree[(nodeinfo[i][0], nodeinfo[i][1])] = [i + 1, 0, [], []]
+    def insert(parent, node):
+        side = 3 if node[0] < parent[0] else 4
+        if not parent[side]:
+            parent[side] = node[2]
+            return
 
-    nodeinfo.sort(key=lambda x: (-x[1], x[0]))
-    tree[(nodeinfo[0][0], nodeinfo[0][1])][1] = -1
-    parent_node_list = []
-    temp_node_list = [nodeinfo[0]]
-    # 부모 노드의 부모 노드를 p_p_node라고 쓴다.
-    for i in range(1, len(nodeinfo)):
-        cur_node = nodeinfo[i]
-        if temp_node_list[-1][1] != cur_node[1]:
-            parent_node_list = list(temp_node_list)
-            temp_node_list = []
+        insert(tree[parent[side] - 1], node)
 
-        # parent_node_list는 이미 x좌표 오름차순 정렬 상태 앞 노드부터 차례대로 부모 노드가 되는지를 확인한다.
-        for i in range(len(parent_node_list)):
-            p_node = parent_node_list[i]
-            p_p_node_x = tree[(p_node[0], p_node[1])][1]
-            # 왼쪽 자식으로
-            if p_p_node_x > p_node[0] > cur_node[0]:
-                tree[(p_node[0], p_node[1])][2] = [cur_node[0], cur_node[1]]
-                tree[(cur_node[0], cur_node[1])][1] = p_node[0]
-                break
-            # 오른쪽 자식으로
-            elif p_p_node_x > cur_node[0] > p_node[0] and \
-                    (i < len(parent_node_list) - 1 and cur_node[0] < tree[(parent_node_list[i + 1][0], parent_node_list[i + 1][1])][1] or i == len(parent_node_list) - 1):
-                tree[(p_node[0], p_node[1])][3] = [cur_node[0], cur_node[1]]
-                tree[(cur_node[0], cur_node[1])][1] = p_node[0]
-                break
-            # 왼쪽 자식으로
-            elif p_node[0] > cur_node[0] > p_p_node_x:
-                tree[(p_node[0], p_node[1])][2] = [cur_node[0], cur_node[1]]
-                tree[(cur_node[0], cur_node[1])][1] = p_node[0]
-                break
-            # 오른쪽 자식으로
-            elif cur_node[0] > p_node[0] > p_p_node_x and \
-                    (i < len(parent_node_list) - 1 and cur_node[0] < tree[(parent_node_list[i + 1][0], parent_node_list[i + 1][1])][1] or i == len(parent_node_list) - 1):
-                tree[(p_node[0], p_node[1])][3] = [cur_node[0], cur_node[1]]
-                tree[(cur_node[0], cur_node[1])][1] = p_node[0]
-                break
+    n = len(nodeinfo)
+    tree = [nodeinfo[i] + [i + 1, 0, 0] for i in range(n)]
+    desc_tree = sorted(tree, key=lambda x: -x[1])
+    for i in range(1, n):
+        insert(desc_tree[0], desc_tree[i])
 
-        temp_node_list.append(cur_node)
-
-    preorder_list = []
-    postorder_list = []
-    order(nodeinfo[0][0], nodeinfo[0][1])
+    preorder_list, postorder_list = [], []
+    order(desc_tree[0])
 
     return [preorder_list, postorder_list]
+
 
 print(solution([[5,3],[11,5],[13,3],[3,5],[6,1],[1,3],[8,6],[7,2],[2,2]]))
