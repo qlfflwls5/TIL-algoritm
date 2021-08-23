@@ -38,7 +38,7 @@ def CountingSort(arr, temp, k):
     for i in range(1, len(C)):
         C[i] += C[i-1]
     
-    for i in range(len(temp), -1, -1):
+    for i in range(len(temp)-1, -1, -1):
         temp[C[arr[i]]-1] = arr[i]
         C[arr[i]] -= 1
 ```
