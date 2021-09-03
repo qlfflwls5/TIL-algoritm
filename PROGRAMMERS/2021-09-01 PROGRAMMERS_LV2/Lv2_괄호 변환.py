@@ -68,7 +68,7 @@ def make_right(u, v):
     if len(u) == 2:
         return '(' + division(v) + ')'
     else:
-        return '(' + division(v) + ')' + opposite_bracket[u[1]] + u[2:-2] + opposite_bracket[u[-1]]
+        return '(' + division(v) + ')' + ''.join([opposite_bracket[b] for b in u[1:-1]])
 
 
 def solution(p):
