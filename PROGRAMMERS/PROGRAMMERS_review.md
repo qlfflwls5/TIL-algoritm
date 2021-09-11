@@ -324,3 +324,18 @@ def solution(str1, str2):
   + SQL 코딩 테스트를 위해서 프로그래머스에 있는 SQL 고득점 kit를 풀어보려고 한다.
   + 간단한 SELECT 파트부터 시작해 총 여섯 파트를 여유가 있을 때마다 풀 것이다!
   + 이번 SELECT 파트는 다행히 기존에 알고 있던 지식으로 바로 쉽게 풀 수 있었다.
+
+<br/>
+
+## 2021-09-11
+
++ 프로그래머스에서 고득점 SQL kit의 SELECT 파트를 풀었다. 
++ 총 4문제의 간단한 COUNT, MIN, MAX를 활용한 문제
++ 칼럼에서 중복된 값을 제거하기 위해서는 DISTINCT를 붙인다.
+  + COUNT 등에서 안쪽에 DISTINCT를 쓴다. `SELECT COUNT(DISTINCT NAME) FROM TABLE`
+  + DISTINCT로 칼럼을 지정해주면 자동으로 NULL은 제외된다.
+  + 결과물의 칼럼 이름을 지정해줄 수 있다. `SELECT COUNT(DISTINCT NAME) 칼럼명 FROM TABLE`
++ 느낀점 및 배운점
+
+  + DISTINCT와 집계함수에 대해서 배우게 되었다.
+  + 특히 DISTINCT는 실무에서 많이 쓰이게 될 것 같다.
