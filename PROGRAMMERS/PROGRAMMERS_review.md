@@ -339,3 +339,19 @@ def solution(str1, str2):
 
   + DISTINCT와 집계함수에 대해서 배우게 되었다.
   + 특히 DISTINCT는 실무에서 많이 쓰이게 될 것 같다.
+
+<br/>
+
+## 2021-09-13
+
++ 프로그래머스에서 고득점 SQL kit의 SELECT 파트를 풀었다. 
++ 총 4문제의 GROUP BY, HAVING, ORDER BY FIELD(), SET, WITH RECURSIVE AS, LEFT JOIN를 활용한 문제
++ 주석으로 정리된 것이 많다. 코드를 꼭 참고하자.
+  + 특히 GROUP BY를 통해서는 COUNT가 0인 것을 잡아낼 수가 없다.
+    + 이때, 두 가지 방법이 있다.
+      1. SET을 통해 변수를 만들어서 하는법
+      2. WITH RECURSIVE를 통해 미리 0의 값을 갖는 가상 테이블을 만들고 조인하는 법
++ 느낀점 및 배운점
+
+  + 갑자기 난이도가 확 올라갔다. 더이상 알고 있던 지식만으로 안되니 구글링을 하면서 익히자.
+
