@@ -329,7 +329,7 @@ def solution(str1, str2):
 
 ## 2021-09-11
 
-+ 프로그래머스에서 고득점 SQL kit의 SELECT 파트를 풀었다. 
++ 프로그래머스에서 고득점 SQL kit의 SUM MIN MAX 파트를 풀었다. 
 + 총 4문제의 간단한 COUNT, MIN, MAX를 활용한 문제
 + 칼럼에서 중복된 값을 제거하기 위해서는 DISTINCT를 붙인다.
   + COUNT 등에서 안쪽에 DISTINCT를 쓴다. `SELECT COUNT(DISTINCT NAME) FROM TABLE`
@@ -344,7 +344,7 @@ def solution(str1, str2):
 
 ## 2021-09-13
 
-+ 프로그래머스에서 고득점 SQL kit의 SELECT 파트를 풀었다. 
++ 프로그래머스에서 고득점 SQL kit의 GROUP BY 파트를 풀었다. 
 + 총 4문제의 GROUP BY, HAVING, ORDER BY FIELD(), SET, WITH RECURSIVE AS, LEFT JOIN를 활용한 문제
 + 주석으로 정리된 것이 많다. 코드를 꼭 참고하자.
   + 특히 GROUP BY를 통해서는 COUNT가 0인 것을 잡아낼 수가 없다.
@@ -359,10 +359,24 @@ def solution(str1, str2):
 
 ## 2021-09-17
 
-+ 프로그래머스에서 고득점 SQL kit의 SELECT 파트를 풀었다. 
++ 프로그래머스에서 고득점 SQL kit의 IS NULL 파트를 풀었다. 
 + 총 3문제의 IS NULL, IS NOT NULL, IFNULL(칼럼명, '대체 문자열')를 활용한 문제
 + 문법만 안다면 딱히 어려울 것은 없는 문제들이었다.
   + IFNULL을 새로 배웠다.
 + 느낀점 및 배운점
 
   + 다음 파트부터가 많이 출제되고 어려운 파트라고 한다. 긴장하자
+
+<br/>
+
+## 2021-10-03
+
++ 프로그래머스에서 고득점 SQL kit의 JOIN 파트를 풀었다. 
++ 총 4문제의 JOIN, SUBSTR, INSTR, LIKE를 활용한 문제
++ JOIN, ON, WHERE로 이어지는 문법으로 두 테이블에서 내가 원하는 부분만을 추출하는 방법을 익히자.
+  + https://pearlluck.tistory.com/46 여기에 매우 정리가 잘되어 있다.
+  + ON은 조인을 하는 기준으로, 대부분 PK를 같다고 하면 된다.
++ 느낀점 및 배운점
+
+  + 다행히도 JOIN 부분은 문법만 새로 배우고서 모두 풀 수 있었다.
+  + 어느 JOIN을 쓰는지 헷갈리지 않을 정도로 익혀놓자.
