@@ -50,3 +50,24 @@ for i in range(N-1):
                 dists[end-1] - dists[i])
 
 print(max_v)
+
+
+# 2
+N = int(input())
+dists = [int(input()) for _ in range(N)]
+total = sum(dists)
+s1, s2 = dists[0], total - dists[0]
+max_v = 0
+start, end = 0, 1
+while start < end and end < N:
+    max_v = max(max_v, min(s1, s2))
+    if s1 < s2:
+        s1 += dists[end]
+        s2 -= dists[end]
+        end += 1
+    else:
+        s1 -= dists[start]
+        s2 += dists[start]
+        start += 1
+
+print(max_v)
