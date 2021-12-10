@@ -30,11 +30,10 @@ from sys import stdin
 input = stdin.readline
 
 
-def find_set(x):
-    while x != p[x]:
-        x = p[x]
-
-    return x
+def find_set(p, x):
+    if x != p[x]:
+        p[x] = find_set(p, p[x])
+    return p[x]
 
 
 N = int(input())
@@ -46,13 +45,12 @@ for i in range(3):
         edges.append([planets[j-1][3], planets[j][3], abs(planets[j-1][i] - planets[j][i])])
 
 edges.sort(key=lambda x: x[2])
-print(edges)
 p = [i for i in range(N)]
 S = 0
 cnt = 0
 for s, e, w in edges:
-    if find_set(s) != find_set(e):
-        p[find_set(e)] = find_set(s)
+    if find_set(p, s) != find_set(p, e):
+        p[find_set(p, e)] = find_set(p, s)
         S += w
         cnt += 1
         if cnt == N-1:
