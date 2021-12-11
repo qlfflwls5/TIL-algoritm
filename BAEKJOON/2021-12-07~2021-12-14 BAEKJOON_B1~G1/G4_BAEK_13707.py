@@ -17,3 +17,36 @@
 # 21
 
 
+# 규칙 (위 + 왼쪽 = 나)
+# 만들기(1, 2, 3, 4, ..., N)
+# K별로
+# 1 1 1 1
+# 2 3 4 5
+# 3 6 10 15
+# 4 10 20
+# 5 15 35
+# 6 21
+# 즉, K개로 N만들기 = K개로 N-1 만들기 + K-1개로 N 만들기 => 조합의 공식과 비슷
+# N, K = map(int, input().split())
+# dp = [[i] + [1] * (N-1) for i in range(1, K+1)]
+# for i in range(1, K):
+#     for j in range(1, N):
+#         dp[i][j] = (dp[i-1][j] + dp[i][j-1]) % 1000000000
+#
+# print(dp[K-1][N-1])
+
+
+# 2 결국 규칙을 찾아보면 (N+K-1)개 중에 N개를 뽑는 조합 (N+K-1)CN
+def nCr(n, r):
+    numerator = 1
+    denominator = 1
+    k = min(r, n-r)
+    for i in range(1, k+1):
+        denominator *= i
+        numerator *= n+1-i
+
+    return numerator // denominator
+
+
+N, K = map(int, input().split())
+print(nCr(N+K-1, N) % 1000000000)
