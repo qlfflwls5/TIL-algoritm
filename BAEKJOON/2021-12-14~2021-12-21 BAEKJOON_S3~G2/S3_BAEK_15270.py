@@ -31,3 +31,27 @@
 # 3
 
 
+def dfs(start, S):
+    global max_v
+    max_v = max(max_v, S if S == N else S + 1)
+
+    for u in range(start, N):
+        for v in AL[u]:
+            if not visited[u] and not visited[v]:
+                visited[u] = 1
+                visited[v] = 1
+                dfs(u+1, S+2)
+                visited[u] = 0
+                visited[v] = 0
+
+
+N, M = map(int, input().split())
+AL = [[] for _ in range(N)]
+for _ in range(M):
+    u, v = sorted(list(map(int, input().split())))
+    AL[u-1].append(v-1)
+
+visited = [0] * N
+max_v = 0
+dfs(0, 0)
+print(max_v)
