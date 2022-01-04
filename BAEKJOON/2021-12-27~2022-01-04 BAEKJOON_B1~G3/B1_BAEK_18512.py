@@ -28,9 +28,6 @@
 # -1
 
 
-import math
-
-
 x, y, dx, dy = map(int, input().split())
 diff_set = set()
 while dx != dy:
